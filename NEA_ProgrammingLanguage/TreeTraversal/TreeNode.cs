@@ -1,4 +1,4 @@
-﻿namespace ExpressionEvaluation.TreeTraversal
+﻿namespace TreeTraversal
 {
     abstract class TreeNode
     {

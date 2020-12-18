@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace ExpressionEvaluation.TreeTraversal
+namespace TreeTraversal
 {
     class Traversal
     {
