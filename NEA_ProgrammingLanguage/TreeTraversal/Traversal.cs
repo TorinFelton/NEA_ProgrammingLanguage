@@ -12,7 +12,7 @@ namespace TreeTraversal
             List<TreeNode> nodes = new List<TreeNode>();
             if (node.left != null) nodes.AddRange(postOrder(node.left)); // Add recursive call onto the end (via AddRange) of the List
             if (node.right != null) nodes.AddRange(postOrder(node.right));
-            nodes.Add(node); // As is post order, add the parent node to the end.
+            nodes.Add(node); // As it's post order, add the parent node to the end.
             return nodes;
         }
 

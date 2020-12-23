@@ -17,12 +17,12 @@ namespace Lexer
         {
             while (contents.More())
             {
-                char character = contents.MoveNext();
+                char character = contents.MoveNext(); 
                 if (" \n\t".Contains(character)) continue; // We do not care about spaces or new lines, skip iteration
                 // Operators
                 else if ("+-*/^".Contains(character)) yield return new Token("operator", character.ToString());
                 // General Guideline Grammar
-                else if ("(){};=".Contains(character)) yield return new Token(character.ToString(), "");
+                else if ("(){};=<>".Contains(character)) yield return new Token("grammar", character.ToString());
                 // Numbers (only supports integers)
                 else if (Regex.IsMatch(character.ToString(), "[0-9]")) yield return new Token("number", Match_GrabChunk(character, "[0-9]"));
                 // Identifiers - can have numbers, not at the beginning though
