@@ -1,8 +1,9 @@
-﻿using System;
+﻿using Lexer_Module;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace NEA_ProgrammingLanguage.Parser
+namespace Parser_Module
 {
     class IfStatement : Step
     {
@@ -10,7 +11,7 @@ namespace NEA_ProgrammingLanguage.Parser
 
         public IfStatement() { }
 
-        public IfStatement(List<string> operands, List<Step> cbContents)
+        public IfStatement(List<Token> operands, List<Step> cbContents)
         {
             this.operands = operands;
             this.codeBlockContents = cbContents;
@@ -18,12 +19,15 @@ namespace NEA_ProgrammingLanguage.Parser
 
         public override string ToString()
         {
-            string toReturn = "";
+            List<string> operandStrings = new List<string>();
+            foreach (Token tok in operands) operandStrings.Add(tok.Value());
+
+            string codeBlockString = "";
             foreach (Step step in this.codeBlockContents) // Collect each Step in the codeblock and add to string
             {
-                toReturn += step.ToString() + "\n";
+                codeBlockString += step.ToString() + "\n";
             }
-            return "(IF) CONDITION: [" + String.Join(", ", this.operands.ToArray()) + "]\n CONTENTS: " + toReturn; // Display condition operands AND each Step operand
+            return "(IF) CONDITION: [" + String.Join("", operandStrings) + "]\n CONTENTS: \n" + codeBlockString; // Display condition operands AND each Step operand
         }
     }
 }

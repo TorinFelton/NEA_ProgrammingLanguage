@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace NEA_ProgrammingLanguage.Parser
+namespace Parser_Module
 {
     static class Syntax
     {

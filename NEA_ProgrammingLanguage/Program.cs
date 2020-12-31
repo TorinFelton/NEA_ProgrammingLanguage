@@ -1,6 +1,9 @@
-﻿using System;
+﻿using Parser_Module;
+using Lexer_Module;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+
 
 namespace NEA_ProgrammingLanguage
 {
@@ -19,13 +22,18 @@ namespace NEA_ProgrammingLanguage
                 input += newInput;
             } while (newInput.Length > 0);
 
-            Lexer.Tokeniser tokeniser = new Lexer.Tokeniser(input);
-            List<Lexer.Token> tokens = tokeniser.Tokenise().ToList();
+            Tokeniser tokeniser = new Tokeniser(input);
+            List<Token> tokens = tokeniser.Tokenise().ToList();
+            
+            // Console.WriteLine(String.Join("\n", tokens));
 
-            foreach (Parser.Step step in Parser.Parse.ParseTokens(tokens))
+            Parser parseTok = new Parser(tokens);
+
+            foreach (Step step in parseTok.ParseTokens())
             {
                 Console.WriteLine(step.ToString());
             }
+            
         }
     }
 }

@@ -1,0 +1,8 @@
+﻿int x = 0;
+if (x == 0) {
+	output(x);
+	x = x + 1;
+	if (x > 0) {
+		output("X is incremented");
+	}
+}

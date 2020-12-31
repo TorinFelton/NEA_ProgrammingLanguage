@@ -1,4 +1,4 @@
-﻿namespace Lexer
+﻿namespace Lexer_Module
 {
     class Token
     {

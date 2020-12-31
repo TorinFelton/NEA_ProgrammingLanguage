@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 
-namespace Lexer
+namespace Lexer_Module
 {
     class Tokeniser
     {
