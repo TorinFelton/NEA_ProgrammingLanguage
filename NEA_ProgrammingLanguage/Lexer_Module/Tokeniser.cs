@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
+using Errors;
 
 namespace Lexer_Module
 {
@@ -39,7 +40,7 @@ namespace Lexer_Module
                 // Strings
                 else if ("\"'".Contains(character)) yield return new Token("string", Char_GrabChunk(character));
                 // Any strange or unrecognisable characters throw an error.
-                else throw new SystemException();
+                else throw new SyntaxError();
             }
         }
 

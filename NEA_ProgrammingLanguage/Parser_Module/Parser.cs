@@ -3,6 +3,7 @@ using Lexer_Module;
 using Parser_Module.Events;
 using System;
 using System.Collections.Generic;
+using Errors;
 
 namespace Parser_Module
 {
@@ -23,7 +24,7 @@ namespace Parser_Module
                     // Could be variable declaration, assignment, function call, "if"
                 {
                     if (Syntax.IsType(nextTok.Value()))
-                        // If it is a var type, e.g "int", "string" - if it is, this is a variable declaration ("int x = 0;")
+                    // If it is a var type, e.g "int", "string" - if it is, this is a variable declaration ("int x = 0;")
                     {
                         /*
                          * EXPECTED PATTERN: varType varName = expr;
@@ -36,7 +37,7 @@ namespace Parser_Module
                         EvaluationSteps.Add(varDeclare); // Add Event object to the overall list of 'Steps' for the Evaluator module
                     }
                     else if (nextTok.Value().ToLower().Equals("if"))
-                        // Start of an if statement
+                    // Start of an if statement
                     {
                         /*
                          * EXPECTED PATTERN: if(operands) { codeblock }
@@ -51,10 +52,10 @@ namespace Parser_Module
                         EvaluationSteps.Add(statement);
                     }
 
-                    
+
                     else if (GrammarTokenCheck(tokQueue.Next(), "("))
-                        // This condition will return true for an if statement, hence the else if and placement AFTER the 'if' statement check
-                        // Therefore must be start of function
+                    // This condition will return true for an if statement, hence the else if and placement AFTER the 'if' statement check
+                    // Therefore must be start of function
                     {
                         /*
                          * EXPECTED PATTERN: funcName(expr);
@@ -85,6 +86,7 @@ namespace Parser_Module
                         VarChange varChan = CaptureVarChange(nextTok.Value());
                         EvaluationSteps.Add(varChan);
                     }
+                    else throw new SyntaxError();
                 }
             }
 
@@ -102,10 +104,10 @@ namespace Parser_Module
             string varName;
 
             if (nextTok.Type().Equals("identifier")) varName = nextTok.Value(); // Collect Token with name of the variable
-            else throw new SystemException(); // Throw error if variable name is not an 'identifier' token (invalid syntax)
+            else throw new SyntaxError(); // Throw error if variable name is not an 'identifier' token (invalid syntax)
 
             // Next token after varName should be an "="
-            if (!GrammarTokenCheck(tokQueue.MoveNext(), "=")) throw new SystemException(); // Throw syntax error if this is not found, and also move along queue index
+            if (!GrammarTokenCheck(tokQueue.MoveNext(), "=")) throw new SyntaxError(); // Throw syntax error if this is not found, and also move along queue index
 
             // We have varType and varName, now we need the tokens that form an expression to represent varValue.
             // This can be any amount of tokens, so we must collect them all
@@ -130,7 +132,7 @@ namespace Parser_Module
             List<Step> codeBlockContents = new List<Step>();
 
             // Next token after 'if' should be '('
-            if (!GrammarTokenCheck(tokQueue.MoveNext(), "(")) throw new SystemException(); // Check next token while simulatneously moving along queue
+            if (!GrammarTokenCheck(tokQueue.MoveNext(), "(")) throw new SyntaxError(); // Check next token while simulatneously moving along queue
 
             // Next token(s) should be operands to form a 'condition' 
             // These token(s) will be inside ( )
@@ -140,12 +142,13 @@ namespace Parser_Module
             // OPERANDs can be any expression, such as 9+1*x, hence we have to collect them carefully
             // We can split the list of tokens by the comparator, but we need to find it first
             string comparator = CollectComparator(condition);
-            if (comparator.Equals("")) throw new SystemException();
+            if (comparator.Equals("")) throw new SyntaxError(); // If we didn't find a comparator we have a syntax error
+
             // We now have a comparator to split by
             (List<Token> Operand1, List<Token> Operand2) = CaptureOperands(condition, comparator);
 
             // Next token after ')' should be '{'
-            if (!GrammarTokenCheck(tokQueue.MoveNext(), "{")) throw new SystemException(); // Check next token while simulatneously moving along queue
+            if (!GrammarTokenCheck(tokQueue.MoveNext(), "{")) throw new SyntaxError(); // Check next token while simulatneously moving along queue
 
             // Next token(s) should all be programming statements inside the code block { }
             // Once again, we need to collect these so we can parse them

@@ -16,13 +16,14 @@ namespace NEA_ProgrammingLanguage
             // ExpressionEvaluation.TestProgram.Run();
             // Evaluator_Module.ExpressionEvaluation.TestProgram.Run();
 
-            Console.Write("Enter a valid file name to run: ");
 
             bool invalid = true;
             string toRun = "";
             while (invalid) {
                 try
                 {
+                    Console.Write("Enter a valid file name to run: ");
+
                     toRun = System.IO.File.ReadAllText(Console.ReadLine());
                     invalid = false;
                 } catch
@@ -31,16 +32,7 @@ namespace NEA_ProgrammingLanguage
                 }
             }
 
-            /*
-            string input = "";
-            string newInput = "";
-            do // Test multiple lines of input
-            {
-                newInput = Console.ReadLine();
-                input += newInput;
-            } while (newInput.Length > 0);
-            */
-
+            Console.WriteLine("-------------------- PROGRAM STARTED --------------------");
             Tokeniser tokeniser = new Tokeniser(toRun);
             List<Token> tokens = tokeniser.Tokenise().ToList();
             
@@ -52,7 +44,8 @@ namespace NEA_ProgrammingLanguage
 
             Evaluator eval = new Evaluator();
             eval.Evaluate(evalSteps);
-            
+            Console.WriteLine("-------------------- PROGRAM ENDED --------------------");
+
         }
     }
 }

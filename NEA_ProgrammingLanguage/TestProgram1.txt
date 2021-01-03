@@ -8,11 +8,14 @@ if (x >= 0) {
 	}
 	inputInt(x);
 	if (x > 0) {
-		output("New X value: ");
 		output(x);
 		outputln(" is greater than 0.");
 	}
 }
+
+int x = "Hello";
+
+
 string testString = "Hello World";
 outputln("Current string: " + testString);
 inputStr(testString);

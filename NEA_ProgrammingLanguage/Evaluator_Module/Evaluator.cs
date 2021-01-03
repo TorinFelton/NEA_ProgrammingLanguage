@@ -1,4 +1,5 @@
-﻿using Evaluator_Module.ExpressionEvaluation.Algorithms;
+﻿using Errors;
+using Evaluator_Module.ExpressionEvaluation.Algorithms;
 using Lexer_Module;
 using Parser_Module;
 using Parser_Module.Events;
@@ -37,12 +38,12 @@ namespace Evaluator_Module
                 // Declare a variable in the variableScope
                 {
                     VarDeclare varDecl = (VarDeclare)evalStep; // Cast as we know it's a VarDeclare obj
-                    if (variableScope.ContainsKey(varDecl.Name())) throw new SystemException();
+                    if (variableScope.ContainsKey(varDecl.Name())) throw new DeclareError();
                     // If scope already has a variable that name, you cannot redeclare it as it already exists.
                     // Potential endpoint if variable exists - entire program will stop (crash).
                     Token varExpr = ResolveExpression(varDecl.Value());
 
-                    if (!varExpr.Type().Equals(varDecl.VarType())) throw new SystemException();
+                    if (!varExpr.Type().Equals(varDecl.VarType())) throw new TypeError();
                     // Value of variable does not match type with declared one. e.g 'int x = "Hello";' 
 
 
@@ -56,7 +57,7 @@ namespace Evaluator_Module
                 {
                     VarChange varChan = (VarChange)evalStep; // Cast as we know it is a VarChange obj
 
-                    if (!variableScope.ContainsKey(varChan.Name())) throw new SystemException();
+                    if (!variableScope.ContainsKey(varChan.Name())) throw new ReferenceError();
                     // If variable is NOT in the variableScope then we cannot change it as it doesn't exist.
                     // Potential endpoint for program crash
                     else
@@ -64,7 +65,7 @@ namespace Evaluator_Module
                         string varType = variableScope[varChan.Name()].Type();
                         Token newValue = ResolveExpression(varChan.Value());
 
-                        if (!varType.Equals(newValue.Type())) throw new SystemException();
+                        if (!varType.Equals(newValue.Type())) throw new TypeError();
                         // If the new value of the variable is not the right type, then crash.
                         // Potential endpoint
                         // e.g int x = 0; x = "hi"; will cause this error
@@ -90,7 +91,7 @@ namespace Evaluator_Module
                         CallFunction(functionCall.Name(), functionCall.Arguments()[0]); // Pass in first value in Arguments as there only should be one - the variable to be input to
                     }
                 }
-                else throw new SystemException(); // Unrecognised type, crash program.
+                else throw new SyntaxError(); // Unrecognised Step, crash program.
             }
         }
 
@@ -118,7 +119,7 @@ namespace Evaluator_Module
                 else
                 {
                     // We must be dealing with concatenation
-                    if (!expr[0].Type().Equals("string")) throw new SystemException();
+                    if (!expr[0].Type().Equals("string")) throw new SyntaxError();
                     // Concatenation expressions MUST start with a string
                     // e.g string x = + "Hello World"; will cause ERROR as expr starts with '+' 
 
@@ -133,7 +134,7 @@ namespace Evaluator_Module
                             {
                                 finalResult += expr[index + 1].Value(); // Add NEXT string to final result
                             }
-                            else throw new SystemException(); // Cannot do any other operation than '+' on strings
+                            else throw new TypeMatchError(); // Cannot do any other operation than '+' on strings
                         }
 
                         index++;
@@ -150,7 +151,7 @@ namespace Evaluator_Module
 
                 toReturn = new Token("number", result.ToString());
             }
-            else throw new SystemException(); // invalid expression type has somehow made it through, we cannot evaluate it so throw error.
+            else throw new SyntaxError(); // invalid expression type has somehow made it through, we cannot evaluate it so throw error.
 
             return toReturn;
         }
@@ -172,7 +173,7 @@ namespace Evaluator_Module
                         toAdd = variableScope[tok.Value()];
                         // Add referenced variable's VALUE token to expression instead of the actual reference to the variable
                     }
-                    else throw new SystemException(); // Referencing non-existent variable, throw error
+                    else throw new ReferenceError(); // Referencing non-existent variable, throw error
                 }
                 else toAdd = tok;
 
@@ -200,7 +201,7 @@ namespace Evaluator_Module
                 }
             }
 
-            if (foundString == foundNumber) throw new SystemException(); // Found either both or neither "string" and "number" types in same expression, causes error.
+            if (foundString == foundNumber) throw new TypeMatchError(); // Found either both or neither "string" and "number" types in same expression, causes error.
             else if (foundNumber) return "number";
             else return "string"; // Must be a string if not foundNumber and not foundString == foundNumber == false.
         }
@@ -214,7 +215,7 @@ namespace Evaluator_Module
             if (resolvedOp1.Type().Equals("string") && resolvedOp2.Type().Equals("string"))
             {
                 if (comparison.Equals("==")) toReturn = TokenEqual(resolvedOp1, resolvedOp2);
-                else throw new SystemException(); // Cannot do any other comparison on strings.
+                else throw new ComparisonError(); // Cannot do any other comparison on strings.
 
             } else {
                 int op1Integer;
@@ -224,7 +225,7 @@ namespace Evaluator_Module
                     // Value is stored as a string, hence the conversion to integer.
                     op1Integer = int.Parse(resolvedOp1.Value());
                     op2Integer = int.Parse(resolvedOp2.Value());
-                } else throw new SystemException(); // Invalid types to do these comparisons on
+                } else throw new ComparisonError(); // Invalid types to do these comparisons on
 
                 switch (comparison)
                 {
@@ -267,9 +268,9 @@ namespace Evaluator_Module
             {
                 string varName = argument.Value();
 
-                if (!variableScope.ContainsKey(varName)) throw new SystemException();
+                if (!variableScope.ContainsKey(varName)) throw new ReferenceError();
                 // If variable to input to doesn't exist there is an error
-                if (!variableScope[varName].Type().Equals("string")) throw new SystemException();
+                if (!variableScope[varName].Type().Equals("string")) throw new TypeError();
                 // inputStr() being done to a non-string variable causes an error
 
                 Console.Write("> "); // Automatic input prompt
@@ -281,9 +282,9 @@ namespace Evaluator_Module
             {
                 string varName = argument.Value();
 
-                if (!variableScope.ContainsKey(varName)) throw new SystemException();
+                if (!variableScope.ContainsKey(varName)) throw new ReferenceError();
                 // If variable to input to doesn't exist there is an error
-                if (!variableScope[varName].Type().Equals("number")) throw new SystemException();
+                if (!variableScope[varName].Type().Equals("number")) throw new TypeError();
                 // inputInt() being done to a non-number variable causes an error
 
                 Console.Write("> "); // Automatic input prompt
@@ -295,14 +296,14 @@ namespace Evaluator_Module
                 catch
                 {
                     // if input is not a number, cause error
-                    throw new SystemException(); // TODO CHANGE WHEN ERRORS DEFINED,
+                    throw new TypeError();
                 }
 
                 variableScope[varName] = new Token("number", input.ToString());
                 // The input is converted to an integer originally to check it is ACTUALLY a valid integer
                 // Once we know that, we can store it as a 'number' token with string value and convert it without errors later
             }
-            else throw new SystemException(); // No function name recognised, throw error.
+            else throw new ReferenceError(); // No function name recognised, throw error.
         }
     }
 }
