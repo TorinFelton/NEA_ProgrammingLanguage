@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 
 
-namespace ExpressionEvaluation.Algorithms
+namespace Evaluator_Module.ExpressionEvaluation.Algorithms
 {
     class RPN
     {

@@ -3,7 +3,6 @@ using Lexer_Module;
 using Parser_Module.Events;
 using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace Parser_Module
 {
@@ -24,13 +23,12 @@ namespace Parser_Module
                     // Could be variable declaration, assignment, function call, "if"
                 {
                     if (Syntax.IsType(nextTok.Value()))
-                        // If it is a var type, e.g "int" "string" "bool" - if it is, this is a variable declaration ("int x = 0;")
+                        // If it is a var type, e.g "int", "string" - if it is, this is a variable declaration ("int x = 0;")
                     {
                         /*
                          * EXPECTED PATTERN: varType varName = expr;
                          * e.g int x = 2 + y*10;
                          * e.g string testing = "Hello World!";
-                         * e.g bool testBool = True;
                          */
 
                         Event varDeclare = CaptureVarDeclare(nextTok.Value()); // Call method with argument storing the type of var being declared, e.g 'string'
@@ -78,7 +76,6 @@ namespace Parser_Module
                          * EXPECTED PATTERN: varName = expr;
                          * e.g x = 2 + y*10;
                          * e.g testing = "Hello World!";
-                         * e.g testBool = True;
                          */
 
                         tokQueue.MoveNext(); // Skip the '=' token
@@ -138,7 +135,14 @@ namespace Parser_Module
             // Next token(s) should be operands to form a 'condition' 
             // These token(s) will be inside ( )
             // e.g if (x > 0) {} Capture the "x > 0"
-            operands = CollectInsideBrackets("(", ")");
+            List<Token> condition = CollectInsideBrackets("(", ")");
+            // We need to separate these into OPERAND1, OPERAND2, COMPARATOR to go into the 'operands' list
+            // OPERANDs can be any expression, such as 9+1*x, hence we have to collect them carefully
+            // We can split the list of tokens by the comparator, but we need to find it first
+            string comparator = CollectComparator(condition);
+            if (comparator.Equals("")) throw new SystemException();
+            // We now have a comparator to split by
+            (List<Token> Operand1, List<Token> Operand2) = CaptureOperands(condition, comparator);
 
             // Next token after ')' should be '{'
             if (!GrammarTokenCheck(tokQueue.MoveNext(), "{")) throw new SystemException(); // Check next token while simulatneously moving along queue
@@ -150,7 +154,7 @@ namespace Parser_Module
             Parser parseTokens = new Parser(codeBlockTokens); // Create new parser object with only codeblock tokens
             codeBlockContents = parseTokens.ParseTokens(); // (semi-recursion) Call parse function to parse the codeblock tokens and output a list of Step
 
-            return new IfStatement(operands, codeBlockContents);
+            return new IfStatement(operands, codeBlockContents, Operand1, Operand2, comparator);
         }
 
         
@@ -225,6 +229,44 @@ namespace Parser_Module
             }
 
             return toCollect;
+        }
+
+        public string CollectComparator(List<Token> condition)
+        {
+            foreach (Token tok in condition)
+            {
+                if (tok.Type().Equals("grammar"))
+                {
+                    if (Syntax.IsComparator(tok.Value())) return tok.Value(); // It is generally bad practice to return this way, but there are only two possible outcomes and they are easily managed.
+                }
+            }
+            return ""; 
+        }
+
+        public (List<Token> Operand1, List<Token> Operand2) CaptureOperands(List<Token> condition, string comparator)
+            // Split expression (below in token form) e.g:
+            // Split ['2', '+', '1', '>', '1', '*', '3'] by '>'
+        {
+            List<Token> Operand1 = new List<Token>();
+            List<Token> Operand2 = new List<Token>();
+            bool passedSplitPoint = false;
+
+            foreach (Token tok in condition)
+            {
+                if (tok.Type().Equals("grammar") && tok.Value().Equals(comparator)) // Make sure grammar token and not a string with value ">" or similar
+                {
+                    passedSplitPoint = true;
+                }
+                else if (passedSplitPoint) // Passed the point to split by, add to second list
+                {
+                    Operand2.Add(tok);
+                }
+                else
+                {
+                    Operand1.Add(tok);
+                }
+            }
+            return (Operand1, Operand2); // Return two halves of the list of Tokens
         }
     }
 }

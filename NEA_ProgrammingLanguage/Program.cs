@@ -1,5 +1,6 @@
 ﻿using Parser_Module;
 using Lexer_Module;
+using Evaluator_Module;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,7 +14,24 @@ namespace NEA_ProgrammingLanguage
         {
             // Lexer.TestProgram.Run();
             // ExpressionEvaluation.TestProgram.Run();
+            // Evaluator_Module.ExpressionEvaluation.TestProgram.Run();
 
+            Console.Write("Enter a valid file name to run: ");
+
+            bool invalid = true;
+            string toRun = "";
+            while (invalid) {
+                try
+                {
+                    toRun = System.IO.File.ReadAllText(Console.ReadLine());
+                    invalid = false;
+                } catch
+                {
+                    Console.WriteLine("Invalid file name.");
+                }
+            }
+
+            /*
             string input = "";
             string newInput = "";
             do // Test multiple lines of input
@@ -21,18 +39,19 @@ namespace NEA_ProgrammingLanguage
                 newInput = Console.ReadLine();
                 input += newInput;
             } while (newInput.Length > 0);
+            */
 
-            Tokeniser tokeniser = new Tokeniser(input);
+            Tokeniser tokeniser = new Tokeniser(toRun);
             List<Token> tokens = tokeniser.Tokenise().ToList();
             
             // Console.WriteLine(String.Join("\n", tokens));
 
+            
             Parser parseTok = new Parser(tokens);
+            List<Step> evalSteps = parseTok.ParseTokens();
 
-            foreach (Step step in parseTok.ParseTokens())
-            {
-                Console.WriteLine(step.ToString());
-            }
+            Evaluator eval = new Evaluator();
+            eval.Evaluate(evalSteps);
             
         }
     }

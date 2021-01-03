@@ -4,9 +4,9 @@
     {
         private string type = null;
         private string value = null;
-        public Token(string typ, string val)
+        public Token(string type, string value)
         {
-            type = typ; value = val;
+            this.type = type; this.value = value;
         }
 
         public override string ToString()

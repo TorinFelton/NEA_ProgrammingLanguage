@@ -1,8 +1,20 @@
 ﻿int x = 0;
-if (x == 0) {
-	output(x);
+if (x >= 0) {
+	output("X is greater than or equal to 0. X is: ");
+	outputln(x);
 	x = x + 1;
 	if (x > 0) {
-		output("X is incremented");
+		outputln("X is now greater than 0.");
+	}
+	inputInt(x);
+	if (x > 0) {
+		output("New X value: ");
+		output(x);
+		outputln(" is greater than 0.");
 	}
 }
+string testString = "Hello World";
+outputln("Current string: " + testString);
+inputStr(testString);
+outputln("Newly changed string: " + testString);
+

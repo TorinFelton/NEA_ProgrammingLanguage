@@ -14,7 +14,7 @@ namespace Parser_Module.Events
         public FuncCall(string funcName, List<Token> arguments)
         {
             this.type = "FUNC_CALL";
-            this.funcName = funcName;
+            this.funcName = funcName.ToLower();
             this.arguments = arguments;
         }
 

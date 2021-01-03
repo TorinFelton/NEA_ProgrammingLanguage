@@ -8,18 +8,14 @@ namespace Parser_Module
 {
     abstract class Step
     {
-        protected List<Token> operands;
+        protected string type;
+        public Step(string type) { this.type = type; }
 
-        public Step() { }
-        public Step(List<Token> operands)
+        public Step() { } // Parmaterless option
+
+        public string Type()
         {
-            this.operands = operands;
-        }
-
-
-        public List<Token> GetOperands()
-        {
-            return this.operands;
+            return this.type;
         }
 
         abstract public override string ToString();

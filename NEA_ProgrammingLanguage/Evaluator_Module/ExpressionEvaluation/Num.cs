@@ -1,7 +1,7 @@
 ﻿using TreeTraversal;
 
 
-namespace ExpressionEvaluation
+namespace Evaluator_Module.ExpressionEvaluation
 {
     class Num : TreeNode
     {

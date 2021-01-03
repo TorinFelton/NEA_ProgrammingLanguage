@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 
 
-namespace ExpressionEvaluation
+namespace Evaluator_Module.ExpressionEvaluation
 {
     class BinOp : TreeNode
     {

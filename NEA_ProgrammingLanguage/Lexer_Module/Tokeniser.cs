@@ -18,11 +18,20 @@ namespace Lexer_Module
             while (contents.More())
             {
                 char character = contents.MoveNext(); 
-                if (" \n\t".Contains(character)) continue; // We do not care about spaces or new lines, skip iteration
+                if (" \n\t\r".Contains(character)) continue; // We do not care about spaces or new lines, skip iteration
                 // Operators
                 else if ("+-*/^".Contains(character)) yield return new Token("operator", character.ToString());
                 // General Guideline Grammar
-                else if ("(){};=<>".Contains(character)) yield return new Token("grammar", character.ToString());
+                else if ("(){};=<>".Contains(character))
+                {
+                    // Check if more tokens past it then check if we've found a comparator operator like "==", ">=", "<="
+                    if (contents.More() && "=<>".Contains(contents.Next())) 
+                        yield return new Token("grammar", character.ToString() + contents.MoveNext().ToString());
+                        // If the next token is ALSO "=" or "<" or ">", then add both tokens together as one to form "==", "<=", ">="
+
+                    else yield return new Token("grammar", character.ToString());
+                    // else just add single token
+                }
                 // Numbers (only supports integers)
                 else if (Regex.IsMatch(character.ToString(), "[0-9]")) yield return new Token("number", Match_GrabChunk(character, "[0-9]"));
                 // Identifiers - can have numbers, not at the beginning though

@@ -21,7 +21,11 @@ namespace Parser_Module.Events
         }
 
         public string Name() { return varName; }
-        public string VarType() { return varType; }
+        public string VarType() 
+        {
+            if (varType.Equals("int")) return "number";
+            else return varType;
+        }
         public List<Token> Value() { return varValue; }
 
         public override string ToString()
