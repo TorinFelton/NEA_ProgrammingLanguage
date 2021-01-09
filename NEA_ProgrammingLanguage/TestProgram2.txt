@@ -1,0 +1,26 @@
+int x = 10*(4+90);
+int y = 10 * 4+90;
+string helloWrld = "";
+
+if (x == 940) {
+	output("X is: ");
+	outputln(x);
+
+	if (y == 130) {
+		output("Y is: ");
+		outputln(y);
+
+		outputln("Order of operations works!");
+	}
+}
+
+outputln("Give a new value for X: ");
+inputInt(x);
+if (x > 0) { outputln("X is greater than 0!"); }
+
+outputln("Give a string value: ");
+inputStr(helloWrld);
+outputln("Your value: '" + helloWrld + "'");
+
+
+
