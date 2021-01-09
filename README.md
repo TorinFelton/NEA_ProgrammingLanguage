@@ -8,7 +8,7 @@ Targets:
 - [x] Implement Lexer
 - [x] Implement Parser
 - [x] Implement Evaluator
-- [ ] Error handling outside of C# default exceptions
+- [x] Error handling outside of C# default exceptions
 - [x] File input
 
 # Points of Interest
