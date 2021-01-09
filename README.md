@@ -46,6 +46,7 @@ outputln("Your value: '" + helloWrld + "'");
 
 <details>
   <summary>Running Example Program</summary>
+'>' in the console indicates an input prompt.
   
 ```
 -------------------- PROGRAM STARTED --------------------
