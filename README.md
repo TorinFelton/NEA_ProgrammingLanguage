@@ -11,6 +11,58 @@ Targets:
 - [x] Error handling outside of C# default exceptions
 - [x] File input
 
+# Showcase Program
+<details>
+<summary>Example Program Source Code</summary>
+This is the 'input' to the interpreter: 
+  
+```c++
+int x = 10*(4+90);
+int y = 10 * 4+90;
+string helloWrld = "";
+
+if (x == 940) {
+	output("X is: ");
+	outputln(x);
+
+	if (y == 130) {
+		output("Y is: ");
+		outputln(y);
+
+		outputln("Order of operations works!");
+	}
+}
+
+outputln("Give a new value for X: ");
+inputInt(x);
+if (x > 0) { outputln("X is greater than 0!"); }
+
+outputln("Give a string value: ");
+inputStr(helloWrld);
+outputln("Your value: '" + helloWrld + "'");
+
+```
+</details>
+
+<details>
+  <summary>Running Example Program</summary>
+  
+```
+-------------------- PROGRAM STARTED --------------------
+X is: 940
+Y is: 130
+Order of operations works!
+Give a new value for X:
+> 100
+X is greater than 0!
+Give a string value:
+> Hello World
+Your value: 'Hello World'
+-------------------- PROGRAM ENDED --------------------
+```
+  </details>
+  
+
 # Points of Interest
 
 - [Main Lexer Method](https://github.com/TorinFelton/NEA_ProgrammingLanguage/blob/master/NEA_ProgrammingLanguage/Lexer_Module/Tokeniser.cs)
