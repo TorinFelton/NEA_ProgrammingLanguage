@@ -1,15 +1,24 @@
-# NEA_ProgrammingLanguage
-Repo for my AQA A-Level Computer Science Non-Exam Assessment (coursework).
+# 'Creating an Interpreter' NEA (Experimental Branch)
+Repo for my AQA A-Level Computer Science Non-Exam Assessment (coursework). This branch is for continuing with the project past the actual content of the A-Level NEA - this is not going to be submitted. Features that I want to add for fun will be added here - the master branch is the actual NEA submission. 
 
 - Uses the implementation of the [ExpressionEvaluator](https://github.com/TorinFelton/ExpressionEvaluator) repository for evaluating mathematical expressions.
-- Will publish full NEA document when completed - this will contain analysis, design and implementation of project.
+- Experimental for extra features, e.g Else statements, While, etc. these will not be added to the Master branch. 
 
-Targets:
+(NEA) Targets:
 - [x] Implement Lexer
 - [x] Implement Parser
 - [x] Implement Evaluator
 - [x] Error handling outside of C# default exceptions
 - [x] File input
+
+(Experimental) Targets:
+- [x] Else statements
+- [ ] Else if statements
+- [ ] While statements
+- [ ] More advanced condition parsing (currently only supports 1 comparison)
+  - [ ] Boolean variable type
+  
+The experimental targets are a lot less likely to be implemented and have not been designed prior like the NEA ones.
 
 # Points of Interest
 
