@@ -9,7 +9,7 @@ namespace Parser_Module
 {
     class Parser
     {
-        TokenQueue tokQueue;
+        private TokenQueue tokQueue;
         public Parser(List<Token> tokens) { tokQueue = new TokenQueue(tokens); }
         public List<Step> ParseTokens()
         {
@@ -47,9 +47,17 @@ namespace Parser_Module
                          *     }
                          */
 
-                        IfStatement statement = CaptureIfStatement();
+                        IfStatement ifState = CaptureIfStatement();
 
-                        EvaluationSteps.Add(statement);
+                        if (tokQueue.More() && tokQueue.Next().Type().Equals("identifier") && tokQueue.Next().Value().Equals("else"))
+                        {
+                            // If next token is 'else' and an identifier
+                            ElseStatement elseState = CaptureElseStatement();
+                            EvaluationSteps.Add(ifState);
+                            EvaluationSteps.Add(elseState);
+                        }
+                        else EvaluationSteps.Add(ifState);
+
                     }
 
 
@@ -160,6 +168,27 @@ namespace Parser_Module
             return new IfStatement(operands, codeBlockContents, Operand1, Operand2, comparator);
         }
 
+        public ElseStatement CaptureElseStatement()
+        {
+            List<Step> codeBlockContents = new List<Step>();
+            // Called when Next() token is 'else' so we need to skip it:
+            tokQueue.MoveNext();
+            // We should be at the beginning of the else codeblock now
+            // e.g: else { output("Hi"); }
+            //           ^ we are here
+
+            // Check next tok is the '{':
+            if (!GrammarTokenCheck(tokQueue.MoveNext(), "{")) throw new SyntaxError(); // Check next token while simulatneously moving along queue
+
+            // Next token(s) should all be programming statements inside the code block { }
+            // We need to collect these so we can parse them
+            List<Token> codeBlockTokens = CollectInsideBrackets("{", "}");
+
+            Parser parseTokens = new Parser(codeBlockTokens); // Create new parser object with only codeblock tokens
+            codeBlockContents = parseTokens.ParseTokens(); // (semi-recursion) Call parse function to parse the codeblock tokens and output a list of Step
+
+            return new ElseStatement(codeBlockContents);
+        }
         
         public FuncCall CaptureFunctionCall(string funcName)
         {

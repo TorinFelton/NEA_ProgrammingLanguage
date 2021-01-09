@@ -1,23 +1,16 @@
 ﻿int x = 0;
-if (x >= 0) {
-	output("X is greater than or equal to 0. X is: ");
+inputInt(x);
+
+if (x > 10) {
+	if (x >= 100) {
+		output("X is bigger than or equal to 100. X is: ");
+		outputln(x);
+	} else {
+		output("X is between 100 and 10 non-incl. X is: ");
+		outputln(x);
+	}
+} else {
+	output("X is smaller than 10. X is: ");
 	outputln(x);
-	x = x + 1;
-	if (x > 0) {
-		outputln("X is now greater than 0.");
-	}
-	inputInt(x);
-	if (x > 0) {
-		output(x);
-		outputln(" is greater than 0.");
-	}
 }
-
-x = 28*2+(2/(2/2));
-outputln(x);
-
-string testString = "Hello World";
-outputln("Current string: " + testString);
-inputStr(testString);
-outputln("Newly changed string: " + testString);
 

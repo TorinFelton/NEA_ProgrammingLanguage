@@ -25,6 +25,7 @@ namespace DataStructures
 
         public Token MoveNext()
         {
+            if (!(tokens.Count > 0 && index < tokens.Count)) throw new IndexOutOfRangeException();
             return tokens[index++]; // Returns index THEN increments it
         }
 

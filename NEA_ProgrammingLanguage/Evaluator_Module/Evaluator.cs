@@ -20,19 +20,33 @@ namespace Evaluator_Module
 
         public void Evaluate(List<Step> evaluationSteps)
         {
-            foreach (Step evalStep in evaluationSteps)
+            for (int index = 0; index < evaluationSteps.Count; index++)
             {
+                Step evalStep = evaluationSteps[index];
                 // .Type() can only be "VAR_DECLARE", "VAR_CHANGE", "FUNC_CALL", "IF_STATEMENT"
                 if (evalStep.Type().Equals("IF_STATEMENT"))
                 {
                     // Evaluate if statement - contains OPERAND1, OPERAND2, COMPARISON, codeBlockContents
                     IfStatement ifState = (IfStatement)evalStep; // Cast as we know it is now an IfStatement obj
+                    bool conditionResult = CompareExpressions(ifState.GetOp1(), ifState.GetOp2(), ifState.GetComparator());
+                    bool hasElse = index + 1 < evaluationSteps.Count && evaluationSteps[index + 1].Type().Equals("ELSE_STATEMENT"); // No chance of index out of range error as set to False before reaching it
 
-                    if (CompareExpressions(ifState.GetOp1(), ifState.GetOp2(), ifState.GetComparator()))
+                    if (conditionResult)
                     // If the 'IfStatement' condition is TRUE
                     {
-                        Evaluate(ifState.GetCBContents()); // 'run' the contents of the if statement 
-                    } // else just do nothing... we skip the if statement as the condition is FALSE.
+                        Evaluate(ifState.GetCBContents()); // 'run' the contents of the if statement
+                        if (hasElse) evaluationSteps.RemoveAt(index + 1); // Remove ELSE_STATEMENT as we do not need to evaluate it.
+                    }
+                    else if (hasElse)
+                    {
+                        // Else if there is at least 1 more step in the list left and the next one is an 'else'
+
+                        ElseStatement elseState = (ElseStatement)evaluationSteps[index+1];
+                        // Cast to else
+                        Evaluate(elseState.GetCBContents()); // 'run' the contents of the else
+
+                        evaluationSteps.RemoveAt(index + 1); // Remove ELSE_STATEMENT as we have used it and do not want to go over it again.
+                    }
                 }
                 else if (evalStep.Type().Equals("VAR_DECLARE"))
                 // Declare a variable in the variableScope
