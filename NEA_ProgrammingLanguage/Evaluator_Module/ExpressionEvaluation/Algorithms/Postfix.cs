@@ -17,12 +17,12 @@ namespace Evaluator_Module.ExpressionEvaluation.Algorithms
             {
                 if (token.Value().Equals("("))
                 {
-                    operatorStack.Push(new BinOp(token.Value()));
+                    operatorStack.Push(new BinOp("("));
                 }
 
                 else if (token.Type().Equals("number")) // If it is a number, add to numStack
                 {
-                    numStack.Push(new Num(Int32.Parse(token.Value())));
+                    numStack.Push(new Num(int.Parse(token.Value())));
                     // Simply create a new Num (inheritant from TreeNode) node with the number in the character.
                 }
 

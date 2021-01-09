@@ -13,8 +13,8 @@ if (x >= 0) {
 	}
 }
 
-int x = "Hello";
-
+x = 28*2+(2/(2/2));
+outputln(x);
 
 string testString = "Hello World";
 outputln("Current string: " + testString);

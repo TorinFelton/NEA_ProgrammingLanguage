@@ -47,7 +47,7 @@ namespace Evaluator_Module
                     // Value of variable does not match type with declared one. e.g 'int x = "Hello";' 
 
 
-                    variableScope.Add(varDecl.Name(), ResolveExpression(varDecl.Value()));
+                    variableScope.Add(varDecl.Name(), varExpr);
                     // Type of variable can be found out by the .Type() of the key's Token.
                     // e.g 'int x = 1 + 2;'
                     // if we want to find variable 'x' type, we find variableScope[x].Type() which will return 'number', with variableScope[x].Value() being '3'
@@ -60,20 +60,15 @@ namespace Evaluator_Module
                     if (!variableScope.ContainsKey(varChan.Name())) throw new ReferenceError();
                     // If variable is NOT in the variableScope then we cannot change it as it doesn't exist.
                     // Potential endpoint for program crash
-                    else
-                    {
-                        string varType = variableScope[varChan.Name()].Type();
-                        Token newValue = ResolveExpression(varChan.Value());
+                    string varType = variableScope[varChan.Name()].Type();
+                    Token newValue = ResolveExpression(varChan.Value());
 
-                        if (!varType.Equals(newValue.Type())) throw new TypeError();
-                        // If the new value of the variable is not the right type, then crash.
-                        // Potential endpoint
-                        // e.g int x = 0; x = "hi"; will cause this error
-                        else
-                        {
-                            variableScope[varChan.Name()] = newValue; // Assign new value (Token)
-                        }
-                    }
+                    if (!varType.Equals(newValue.Type())) throw new TypeError();
+                    // If the new value of the variable is not the right type, then crash.
+                    // Potential endpoint
+                    // e.g int x = 0; x = "hi"; will cause this error
+                    variableScope[varChan.Name()] = newValue; // Assign new value (Token)
+                    
                 }
                 else if (evalStep.Type().Equals("FUNC_CALL"))
                 // Call a function
