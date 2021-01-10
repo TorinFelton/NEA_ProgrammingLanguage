@@ -23,8 +23,8 @@ The experimental targets are a lot less likely to be implemented and have not be
 # Experimental Addition Notes
 
 <details>
-<summary>While Statements</summary>
-I've just reused the template from the 'If' statements and modified it slightly to support while statements - the WhileStatement object directly inherits from the IfStatement one. 
+<summary>While Loops</summary>
+I've just reused the template from the 'If' statements and modified it slightly to support while loops - the WhileStatement object directly inherits from the IfStatement one. 
 As I've added 'While' statements, more complex programs can be created:
   
 <details>
