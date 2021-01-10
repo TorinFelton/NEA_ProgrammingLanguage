@@ -67,7 +67,7 @@ You guessed it! Attempts: 5
 </details>
 
 <details>
-  <summary>Simple Binary Search</summary>
+  <summary>Number Search</summary>
   
 ```c#
 
