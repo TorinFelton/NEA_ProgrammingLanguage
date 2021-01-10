@@ -22,10 +22,88 @@ The experimental targets are a lot less likely to be implemented and have not be
 
 # Experimental Addition Notes
 
-## 'While' statement programs
+<details>
+<summary>While Statements</summary>
 I've just reused the template from the 'If' statements and modified it slightly to support while statements - the WhileStatement object directly inherits from the IfStatement one. 
 As I've added 'While' statements, more complex programs can be created:
+  
+<details>
+  <summary>Simple Guessing Game</summary>
+  
+```c#
 
+string password = "abc123";
+string guess = "";
+int guessAmount = 0;
+
+while (guess != password) {
+	outputln("Guess the password.");
+	inputStr(guess);
+	guessAmount = guessAmount + 1;
+}
+
+output("You guessed it! Attempts: ");
+outputln(guessAmount);
+
+```
+
+Program running:
+```
+-------------------- PROGRAM STARTED --------------------
+Guess the password.
+> abwd
+Guess the password.
+> abc
+Guess the password.
+> abc 123
+Guess the password.
+> I don't know!
+Guess the password.
+> abc123
+You guessed it! Attempts: 5
+-------------------- PROGRAM ENDED --------------------
+
+```
+</details>
+
+<details>
+  <summary>Simple Binary Search</summary>
+  
+```c#
+
+int x = 10*(4/1+1)*27+1;
+int y = 0;
+int z = 99999;
+
+string found = "false";
+
+while (found != "true") {
+	if (y == x) {
+		found = "true";
+		output("Found! Y: ");
+		outputln(y);
+	} else {
+		if (z == x) {
+			output("Found! Z: ");
+			outputln(z);
+		}
+	}
+	y = y + 1;
+	z = z - 1;
+}
+
+```
+
+Program running:
+```
+-------------------- PROGRAM STARTED --------------------
+Found! Y: 1351
+-------------------- PROGRAM ENDED --------------------
+
+```
+  
+</details>
+</details>
 
 # Points of Interest
 
