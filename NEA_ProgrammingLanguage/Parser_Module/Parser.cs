@@ -60,6 +60,17 @@ namespace Parser_Module
 
                     }
 
+                    else if (nextTok.Value().ToLower().Equals("while"))
+                    {
+                        IfStatement template = CaptureIfStatement();
+                        WhileLoop whileLoop = new WhileLoop(template.GetCBContents(), template.GetOp1(), template.GetOp2(), template.GetComparator());
+                        // Reuse code from the if statement because while & if follow the exact same structure:
+                        // while (condition) { codeblock }
+                        // if (condition) { codeblock }
+
+                        EvaluationSteps.Add(whileLoop);
+                    }
+
 
                     else if (GrammarTokenCheck(tokQueue.Next(), "("))
                     // This condition will return true for an if statement, hence the else if and placement AFTER the 'if' statement check
@@ -136,7 +147,6 @@ namespace Parser_Module
 
         public IfStatement CaptureIfStatement()
         {
-            List<Token> operands = new List<Token>();
             List<Step> codeBlockContents = new List<Step>();
 
             // Next token after 'if' should be '('
@@ -165,7 +175,7 @@ namespace Parser_Module
             Parser parseTokens = new Parser(codeBlockTokens); // Create new parser object with only codeblock tokens
             codeBlockContents = parseTokens.ParseTokens(); // (semi-recursion) Call parse function to parse the codeblock tokens and output a list of Step
 
-            return new IfStatement(operands, codeBlockContents, Operand1, Operand2, comparator);
+            return new IfStatement(codeBlockContents, Operand1, Operand2, comparator);
         }
 
         public ElseStatement CaptureElseStatement()

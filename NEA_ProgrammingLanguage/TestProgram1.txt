@@ -1,16 +1,12 @@
-﻿int x = 0;
-inputInt(x);
+﻿string password = "abc123";
+string guess = "";
+int guessAmount = 0;
 
-if (x > 10) {
-	if (x >= 100) {
-		output("X is bigger than or equal to 100. X is: ");
-		outputln(x);
-	} else {
-		output("X is between 100 and 10 non-incl. X is: ");
-		outputln(x);
-	}
-} else {
-	output("X is smaller than 10. X is: ");
-	outputln(x);
+while (guess != password) {
+	outputln("Guess the password.");
+	inputStr(guess);
+	guessAmount = guessAmount + 1;
 }
 
+output("You guessed correct! Attempts: ");
+outputln(guessAmount);

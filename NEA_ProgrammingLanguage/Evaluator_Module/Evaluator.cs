@@ -48,6 +48,18 @@ namespace Evaluator_Module
                         evaluationSteps.RemoveAt(index + 1); // Remove ELSE_STATEMENT as we have used it and do not want to go over it again.
                     }
                 }
+                else if (evalStep.Type().Equals("WHILE_LOOP"))
+                {
+                    WhileLoop whileLoop = (WhileLoop)evalStep;
+                    // Similar to if statement evaluation though no need to set a 'condition' variable because that condition may change
+                    // Basically just reusing the C# while loop with the template of the Interpreted one
+                    while (CompareExpressions(whileLoop.GetOp1(), whileLoop.GetOp2(), whileLoop.GetComparator()))
+                    {
+                        // While the condition is true, evaluate code inside
+                        Evaluate(whileLoop.GetCBContents());
+                    }
+
+                }
                 else if (evalStep.Type().Equals("VAR_DECLARE"))
                 // Declare a variable in the variableScope
                 {
@@ -224,6 +236,7 @@ namespace Evaluator_Module
             if (resolvedOp1.Type().Equals("string") && resolvedOp2.Type().Equals("string"))
             {
                 if (comparison.Equals("==")) toReturn = TokenEqual(resolvedOp1, resolvedOp2);
+                else if (comparison.Equals("!=")) toReturn = !TokenEqual(resolvedOp1, resolvedOp2);
                 else throw new ComparisonError(); // Cannot do any other comparison on strings.
 
             } else {
@@ -240,6 +253,9 @@ namespace Evaluator_Module
                 {
                     case "==":
                         toReturn = TokenEqual(resolvedOp1, resolvedOp2);
+                        break;
+                    case "!=":
+                        toReturn = !TokenEqual(resolvedOp1, resolvedOp2);
                         break;
                     case "<=":
                         // Check if equal or if less than. 
