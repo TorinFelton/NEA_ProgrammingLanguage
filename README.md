@@ -14,11 +14,18 @@ Repo for my AQA A-Level Computer Science Non-Exam Assessment (coursework). This 
 (Experimental) Targets:
 - [x] Else statements
 - [ ] Else if statements
-- [ ] While statements
+- [x] While statements
 - [ ] More advanced condition parsing (currently only supports 1 comparison)
   - [ ] Boolean variable type
   
 The experimental targets are a lot less likely to be implemented and have not been designed prior like the NEA ones.
+
+# Experimental Addition Notes
+
+## 'While' statement programs
+I've just reused the template from the 'If' statements and modified it slightly to support while statements - the WhileStatement object directly inherits from the IfStatement one. 
+As I've added 'While' statements, more complex programs can be created:
+
 
 # Points of Interest
 
