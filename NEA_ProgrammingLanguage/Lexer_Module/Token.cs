@@ -17,7 +17,7 @@
         public string Type()
         {
             return type;
-        }
+        } // GetType() is a built-in C# method to get the type of variable, hence this is named Type() instead - no need to override.
 
         public string Value()
         {

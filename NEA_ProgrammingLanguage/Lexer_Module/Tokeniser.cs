@@ -14,7 +14,11 @@ namespace Lexer_Module
         {
             contents = new StringQueue(input);
         }
-        public IEnumerable<Token> Tokenise()
+        public IEnumerable<Token> Tokenise() 
+            // IEnumerable allows us to use foreach in C#
+            // Not REQUIRED, but means there is no need to explicitly create a list and return it, instead use 'yield return'
+            // 'yield return' allows you to return each element one at a time
+            // In our case, we are returning each Token object in a list of Tokens
         {
             while (contents.More())
             {
