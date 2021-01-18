@@ -1,5 +1,5 @@
-# 'Creating an Interpreter' NEA (Experimental Branch)
-Repo for my AQA A-Level Computer Science Non-Exam Assessment (coursework). This branch is for continuing with the project past the actual content of the A-Level NEA - this is not going to be submitted. Features that I want to add for fun will be added here - the master branch is the actual NEA submission. 
+# 'Creating an Interpreter' (NEA)
+Repo for my AQA A-Level Computer Science Non-Exam Assessment (coursework).
 
 - Uses the implementation of the [ExpressionEvaluator](https://github.com/TorinFelton/ExpressionEvaluator) repository for evaluating mathematical expressions.
 - Experimental for extra features, e.g Else statements, While, etc. these will not be added to the Master branch. 
@@ -11,6 +11,7 @@ Repo for my AQA A-Level Computer Science Non-Exam Assessment (coursework). This 
 - [x] Error handling outside of C# default exceptions
 - [x] File input
 
+
 (Experimental) Targets:
 - [x] Else statements
 - [ ] Else if statements
@@ -20,7 +21,42 @@ Repo for my AQA A-Level Computer Science Non-Exam Assessment (coursework). This 
   
 The experimental targets are a lot less likely to be implemented and have not been designed prior like the NEA ones.
 
-# Experimental Addition Notes
+# Showcase Program
+<details>
+<summary>Example Program Source Code</summary>
+This is the 'input' to the interpreter: 
+  
+```c++
+
+int x = 10*(4+90);
+int y = 10 * 4+90;
+string helloWrld = "";
+
+if (x == 940) {
+	output("X is: ");
+	outputln(x);
+
+	if (y == 130) {
+		output("Y is: ");
+		outputln(y);
+
+		outputln("Order of operations works!");
+	}
+}
+
+outputln("Give a new value for X: ");
+inputInt(x);
+if (x > 0) { outputln("X is greater than 0!"); }
+
+outputln("Give a string value: ");
+inputStr(helloWrld);
+outputln("Your value: '" + helloWrld + "'");
+
+
+```
+</details>
+
+# Addition Notes
 
 <details>
 <summary>While Loops</summary>
@@ -62,9 +98,9 @@ Guess the password.
 > abc123
 You guessed it! Attempts: 5
 -------------------- PROGRAM ENDED --------------------
-
 ```
 </details>
+
 
 <details>
   <summary>Number Search</summary>
@@ -105,6 +141,25 @@ Found! Y 1351
   
 </details>
 </details>
+  <summary>Running Example Program</summary>
+'>' in the console indicates an input prompt.
+  
+```
+-------------------- PROGRAM STARTED --------------------
+X is: 940
+Y is: 130
+Order of operations works!
+Give a new value for X:
+> 100
+X is greater than 0!
+Give a string value:
+> Hello World
+Your value: 'Hello World'
+-------------------- PROGRAM ENDED --------------------
+```
+  </details>
+  
+
 
 # Points of Interest
 
