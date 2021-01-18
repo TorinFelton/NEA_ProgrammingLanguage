@@ -68,6 +68,7 @@ You guessed it! Attempts: 5
 
 <details>
   <summary>Number Search</summary>
+	Note this is still a slightly weird implementation due to the limitations of the language so far.
   
 ```c#
 
@@ -75,29 +76,29 @@ int x = 10*(4/1+1)*27+1;
 int y = 0;
 int z = 99999;
 
-string found = "false";
+int result = 0;
 
-while (found != "true") {
+while (result != x) {
 	if (y == x) {
-		found = "true";
-		output("Found! Y: ");
-		outputln(y);
+		result = y;
+		output("Found! Y");
 	} else {
 		if (z == x) {
-			output("Found! Z: ");
-			outputln(z);
+			result = x;
+			output("Found! Z");
 		}
 	}
 	y = y + 1;
 	z = z - 1;
 }
 
+outputln(result);
 ```
 
 Program running:
 ```
 -------------------- PROGRAM STARTED --------------------
-Found! Y: 1351
+Found! Y 1351
 -------------------- PROGRAM ENDED --------------------
 
 ```
