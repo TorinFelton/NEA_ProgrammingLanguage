@@ -1,23 +1,34 @@
-﻿int x = 0;
-if (x >= 0) {
-	output("X is greater than or equal to 0. X is: ");
-	outputln(x);
-	x = x + 1;
-	if (x > 0) {
-		outputln("X is now greater than 0.");
-	}
-	inputInt(x);
-	if (x > 0) {
-		output(x);
-		outputln(" is greater than 0.");
-	}
+﻿string password = "abc123";
+string guess = "";
+int guessAmount = 0;
+
+while (guess != password) {
+	outputln("Guess the password.");
+	inputStr(guess);
+	guessAmount = guessAmount + 1;
 }
 
-x = 28*2+(2/(2/2));
-outputln(x);
+output("You guessed it! Attempts: ");
+outputln(guessAmount);
 
-string testString = "Hello World";
-outputln("Current string: " + testString);
-inputStr(testString);
-outputln("Newly changed string: " + testString);
 
+int x = 10239;
+int y = 0;
+int z = 99999;
+
+string found = "false";
+
+while (found != "true") {
+	if (y == x) {
+		found = "true";
+		output("Found! Y: ");
+		outputln(y);
+	} else {
+		if (z == x) {
+			output("Found! Z: ");
+			outputln(z);
+		}
+	}
+	y = y + 1;
+	z = z - 1;
+}

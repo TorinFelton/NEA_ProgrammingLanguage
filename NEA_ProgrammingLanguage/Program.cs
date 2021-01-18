@@ -36,7 +36,7 @@ namespace NEA_ProgrammingLanguage
             Tokeniser tokeniser = new Tokeniser(toRun);
             List<Token> tokens = tokeniser.Tokenise().ToList();
             
-            // Console.WriteLine(String.Join("\n", tokens));
+            //Console.WriteLine(String.Join("\n", tokens));
 
             
             Parser parseTok = new Parser(tokens);

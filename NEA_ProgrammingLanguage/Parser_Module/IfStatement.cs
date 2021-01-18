@@ -15,7 +15,7 @@ namespace Parser_Module
 
         public IfStatement() { }
 
-        public IfStatement(List<Token> operands, List<Step> cbContents, List<Token> op1, List<Token> op2, string comparator)
+        public IfStatement(List<Step> cbContents, List<Token> op1, List<Token> op2, string comparator)
         {
             this.type = "IF_STATEMENT";
             this.codeBlockContents = cbContents;

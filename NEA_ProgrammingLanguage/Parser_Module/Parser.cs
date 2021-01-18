@@ -9,19 +9,19 @@ namespace Parser_Module
 {
     class Parser
     {
-        TokenQueue tokQueue;
+        private TokenQueue tokQueue;
         public Parser(List<Token> tokens) { tokQueue = new TokenQueue(tokens); }
         public List<Step> ParseTokens()
         {
             List<Step> EvaluationSteps = new List<Step>();
 
-            while (tokQueue.More())
+            while (tokQueue.More()) // While more tokens in queue (returns bool)
             {
-                Token nextTok = tokQueue.MoveNext();
-                
+                Token nextTok = tokQueue.MoveNext(); // pop next out of TokenQueue        
 
                 if (nextTok.Type().Equals("identifier"))
-                    // Could be variable declaration, assignment, function call, "if"
+                    // All statements in our language begin with identifiers. 
+                    // We do not know what we have at this point, so let's check the identifier to see which tokens should follow after.
                 {
                     if (Syntax.IsType(nextTok.Value()))
                     // If it is a var type, e.g "int", "string" - if it is, this is a variable declaration ("int x = 0;")
@@ -47,9 +47,33 @@ namespace Parser_Module
                          *     }
                          */
 
-                        IfStatement statement = CaptureIfStatement();
+                        IfStatement ifState = CaptureIfStatement(); // Capture all useful information of the following if statements
 
-                        EvaluationSteps.Add(statement);
+                        // We COULD have an else statement, so let's check the next token
+                        // First check there are still MORE tokens to check to avoid out of range errors
+                        // Then check it's an IDENTIFIER ('else')
+                        if (tokQueue.More() && tokQueue.Next().Type().Equals("identifier") && tokQueue.Next().Value().Equals("else"))
+                        {
+                            // If next token is 'else' and an identifier
+                            ElseStatement elseState = CaptureElseStatement();
+                            EvaluationSteps.Add(ifState);
+                            EvaluationSteps.Add(elseState);
+                            // Add if state then else directly after (ordered list!)
+                        }
+                        else EvaluationSteps.Add(ifState); // if no 'else' statement exists just add the if statement
+
+                    }
+
+                    else if (nextTok.Value().ToLower().Equals("while"))
+                    {
+                        IfStatement template = CaptureIfStatement();
+                        WhileLoop whileLoop = new WhileLoop(template.GetCBContents(), template.GetOp1(), template.GetOp2(), template.GetComparator());
+                        // Reuse code from the if statement because while & if follow the exact same structure:
+                        // while (condition) { codeblock }
+                        // if (condition) { codeblock }
+                        // We just captured an if statement then used the information it collected to create a while loop instead
+
+                        EvaluationSteps.Add(whileLoop);
                     }
 
 
@@ -71,7 +95,8 @@ namespace Parser_Module
                         FuncCall funcCall = CaptureFunctionCall(nextTok.Value()); // Pass the function name, e.g 'output' 
                         EvaluationSteps.Add(funcCall);
                     }
-                    else if (GrammarTokenCheck(tokQueue.Next(), "="))
+                    else if (GrammarTokenCheck(tokQueue.Next(), "=")) // .Next() is PEEK not POP.
+                        // Check if the token AFTER this one is "="
                     {
                         /*
                          * EXPECTED PATTERN: varName = expr;
@@ -86,7 +111,9 @@ namespace Parser_Module
                         VarChange varChan = CaptureVarChange(nextTok.Value());
                         EvaluationSteps.Add(varChan);
                     }
-                    else throw new SyntaxError();
+                    else throw new SyntaxError(); 
+                    // If there is a rogue 'else' statement it will be caught in this
+                    // Else statements are not 'looked' for on there own, they are only recognised when an if statement is found
                 }
             }
 
@@ -128,7 +155,6 @@ namespace Parser_Module
 
         public IfStatement CaptureIfStatement()
         {
-            List<Token> operands = new List<Token>();
             List<Step> codeBlockContents = new List<Step>();
 
             // Next token after 'if' should be '('
@@ -157,9 +183,30 @@ namespace Parser_Module
             Parser parseTokens = new Parser(codeBlockTokens); // Create new parser object with only codeblock tokens
             codeBlockContents = parseTokens.ParseTokens(); // (semi-recursion) Call parse function to parse the codeblock tokens and output a list of Step
 
-            return new IfStatement(operands, codeBlockContents, Operand1, Operand2, comparator);
+            return new IfStatement(codeBlockContents, Operand1, Operand2, comparator);
         }
 
+        public ElseStatement CaptureElseStatement()
+        {
+            List<Step> codeBlockContents = new List<Step>();
+            // Called when Next() token is 'else' so we need to skip it:
+            tokQueue.MoveNext();
+            // We should be at the beginning of the else codeblock now
+            // e.g: else { output("Hi"); }
+            //           ^ we are here
+
+            // Check next tok is the '{':
+            if (!GrammarTokenCheck(tokQueue.MoveNext(), "{")) throw new SyntaxError(); // Check next token while simulatneously moving along queue
+
+            // Next token(s) should all be programming statements inside the code block { }
+            // We need to collect these so we can parse them
+            List<Token> codeBlockTokens = CollectInsideBrackets("{", "}");
+
+            Parser parseTokens = new Parser(codeBlockTokens); // Create new parser object with only codeblock tokens
+            codeBlockContents = parseTokens.ParseTokens(); // (semi-recursion) Call parse function to parse the codeblock tokens and output a list of Step
+
+            return new ElseStatement(codeBlockContents);
+        }
         
         public FuncCall CaptureFunctionCall(string funcName)
         {
