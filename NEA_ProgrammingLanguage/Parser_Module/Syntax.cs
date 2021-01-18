@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Parser_Module
 {
-    static class Syntax
+    static class Syntax // This is just a class for definitions and checking
     {
         private static List<string> types = new List<string>() { "int", "string"};
         private static List<string> comparators = new List<string>() { "==", "!=", ">", "<", ">=", "<=" };

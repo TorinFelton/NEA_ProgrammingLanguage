@@ -6,7 +6,7 @@ using TreeTraversal;
 
 namespace Parser_Module
 {
-    abstract class Step
+    abstract class Step // Every child must have a TYPE, the other attributed differ
     {
         protected string type;
         public Step(string type) { this.type = type; }
@@ -18,6 +18,6 @@ namespace Parser_Module
             return this.type;
         }
 
-        abstract public override string ToString();
+        abstract public override string ToString(); // Each one is guaranteed to have a unique ToString() 
     }
 }

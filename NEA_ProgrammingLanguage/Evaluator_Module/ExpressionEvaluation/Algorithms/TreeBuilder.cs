@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using Lexer_Module;
+using Errors;
 
 namespace Evaluator_Module.ExpressionEvaluation.Algorithms
 {
@@ -97,7 +98,7 @@ namespace Evaluator_Module.ExpressionEvaluation.Algorithms
 
                 else
                 {
-                    throw new SyntaxErrorException(); // Don't recognise what kind of Token is in our expression.
+                    throw new SyntaxError(); // Don't recognise what kind of Token is in our expression.
                 }
             }
 
