@@ -14,7 +14,7 @@ namespace Evaluator_Module.ExpressionEvaluation
             Tokeniser tokeniser = new Tokeniser(Console.ReadLine());
             List<Token> tokens = tokeniser.Tokenise().ToList();
 
-            TreeNode bin1 = Postfix.InfixToPostfix(tokens); // e.g "5 * 2 + 1" -> "5 2 * 1 +"
+            TreeNode bin1 = Postfix.BuildAST(tokens); // e.g "5 * 2 + 1" -> "5 2 * 1 +"
             // Using TreeNode type, not BinOp (Binary Operator) as we cannot guarantee the root node of the abstract syntax tree will be an operator.
 
             Console.WriteLine("To postfix:");

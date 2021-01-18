@@ -15,7 +15,7 @@ namespace Evaluator_Module.ExpressionEvaluation
             {"-", 2 },
             {")", 2 },
             {"(", 1 }
-        }; // Static dictionary of precedence levels represented by ints for ease of comparison later on - used in Algorithms/Postfix.cs
+        }; // Static dictionary of precedence levels represented by ints for ease of comparison later on - used in TreeBuilder.cs
 
         public BinOp(string operationValue)
         {
