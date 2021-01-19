@@ -6,6 +6,10 @@ namespace TreeTraversal
     {
         /*
          * All three of these are recursive - they create their own lists which are returned and added onto the list of the parent.
+         * The only one *actually* used in our program is postOrder for the postfix expressions, but the other two are 
+         * useful for testing the Abstract Syntax Trees are correctly being made.
+         * 
+         * Using inOrder traversal on an AST will output the expression in the original, human-readable mathematical form.
          */
         public static List<TreeNode> postOrder(TreeNode node)
         {

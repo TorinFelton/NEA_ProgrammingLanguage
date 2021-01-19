@@ -23,7 +23,7 @@ namespace Parser_Module.Events
         public string Name() { return varName; }
         public string VarType() 
         {
-            if (varType.Equals("int")) return "number";
+            if (varType.Equals("int")) return "number"; // Written as Int in our language but parsed as 'number' for simplicity.
             else return varType;
         }
         public List<Token> Value() { return varValue; }

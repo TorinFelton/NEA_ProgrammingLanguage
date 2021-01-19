@@ -24,10 +24,10 @@ namespace Parser_Module
             this.comparator = comparator;
         }
 
-        public List<Token> GetOp1() { return operand1; }
-        public List<Token> GetOp2() { return operand2; }
-        public string GetComparator() { return comparator; }
-        public List<Step> GetCBContents() { return codeBlockContents; }
+        public List<Token> Operand1() { return operand1; }
+        public List<Token> Operand2() { return operand2; }
+        public string Comparator() { return comparator; }
+        public List<Step> CBContents() { return codeBlockContents; }
         public override string ToString()
         {
             List<string> operand1String = new List<string>();

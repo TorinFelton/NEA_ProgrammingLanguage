@@ -54,7 +54,7 @@ namespace Errors
 
     static class Error
     {
-        public static void ShowError(string err)
+        public static void ShowError(string err) // Pauses program via input prompt, then kill the program as a whole when enter is pressed
         {
             Console.WriteLine(err);
             Console.ReadLine();

@@ -9,7 +9,7 @@ namespace Parser_Module.Events
     class VarChange : Event
     {
         private string varName;
-        private List<Token> varValue;
+        private List<Token> varValue; // List of Tokens for the expression representing the variable's value
 
         public VarChange(string varName, List<Token> varValue)
         {
