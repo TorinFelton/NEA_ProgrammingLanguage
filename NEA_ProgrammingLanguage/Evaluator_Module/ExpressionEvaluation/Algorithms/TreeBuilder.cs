@@ -12,7 +12,7 @@ namespace Evaluator_Module.ExpressionEvaluation.Algorithms
         public static TreeNode BuildAST(List<Token> infix)
         /*
          * It is easier to think of this as a reversal of an RPN calculation algorithm using stacks.
-         * 
+         *
          * This is an implementation of Djikstra's Shunting-yard algorithm
          * It is not 100% true to the original; instead of resolving each expression in the stack it builds a tree
          * We use two stacks: one for operators (e.g +, -, /) and one for the operands (integer)
@@ -23,12 +23,12 @@ namespace Evaluator_Module.ExpressionEvaluation.Algorithms
          *                  +
          *                1   2
          *      Programatically, this will just be given as the '+' root node with .Left and .Right being nodes '1' & '2'
-         * 
-         * 
-         * 
-         * INPUT: List of Token objects that represent a mathematical expression, e.g ['1', '+', '2'] 
+         *
+         *
+         *
+         * INPUT: List of Token objects that represent a mathematical expression, e.g ['1', '+', '2']
          * (just showing Token.Value() as list elements for demo)
-         * 
+         *
          * OUTPUT: The ROOT node of the Abstract Syntax Tree (AST) as a TreeNode object.
          * The parents of any nodes in this AST could be a Num or BinOp (both inherit from TreeNode)
          * Num: Represents just an Integer itself
@@ -42,7 +42,7 @@ namespace Evaluator_Module.ExpressionEvaluation.Algorithms
             {
                 if (token.Value().Equals("(")) operatorStack.Push(new BinOp("("));
                 // If it is the opening of a nested expression, just add it to the opstack - precedences values will be dealt with later
-                
+
 
                 else if (token.Type().Equals("number")) // If it is a number (Integers only supported), add to numStack
                 {

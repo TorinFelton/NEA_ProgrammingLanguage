@@ -2,8 +2,9 @@
 {
     class Token
     {
-        private string type = null;
-        private string value = null;
+        private string type;
+        private string value;
+
         public Token(string type, string value)
         {
             this.type = type; this.value = value;
@@ -14,8 +15,8 @@
             return "('" + type + "', \"" + value + "\")"; // e.g ('grammar', "=")
         }
 
-        public string Type() 
-            // It is easier to name getters as simply Type() or Value() instead of GetType() or GetValue() 
+        public string Type()
+            // It is easier to name getters as simply Type() or Value() instead of GetType() or GetValue()
             // as these are built-in methods that shouldn't really be overriden
         {
             return type;

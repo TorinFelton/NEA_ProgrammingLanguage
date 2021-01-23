@@ -6,7 +6,7 @@ namespace Errors
 {
     class SyntaxError : Exception
     {
-        public SyntaxError() : base() 
+        public SyntaxError() : base()
         {
             Error.ShowError("SYNTAX error. Re-read your program and check for spelling/keyword mistakes.");
         }
@@ -56,9 +56,10 @@ namespace Errors
     {
         public static void ShowError(string err) // Pauses program via input prompt, then kill the program as a whole when enter is pressed
         {
-            Console.WriteLine(err);
-            Console.ReadLine();
-            Environment.Exit(1);
+            Console.WriteLine(err); // Output error
+            Console.WriteLine("Press Enter to quit program.")
+            Console.ReadLine(); // Pause program - pressing 'Enter' will continue
+            Environment.Exit(1); // Kill program process
         }
     }
 }
