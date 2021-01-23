@@ -35,10 +35,10 @@ namespace NEA_ProgrammingLanguage
             Console.WriteLine("-------------------- PROGRAM STARTED --------------------");
             Tokeniser tokeniser = new Tokeniser(toRun);
             List<Token> tokens = tokeniser.Tokenise().ToList();
-            
+
             //Console.WriteLine(String.Join("\n", tokens));
 
-            
+
             Parser parseTok = new Parser(tokens);
             List<Step> evalSteps = parseTok.ParseTokens();
 

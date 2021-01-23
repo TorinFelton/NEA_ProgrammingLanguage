@@ -2,8 +2,9 @@
 {
     class Token
     {
-        private string type = null;
-        private string value = null;
+        private string type;
+        private string value;
+
         public Token(string type, string value)
         {
             this.type = type; this.value = value;
@@ -11,7 +12,7 @@
 
         public override string ToString()
         {
-            return "('" + type + "', \"" + value + "\")"; // e.g (operation, "+")
+            return "('" + type + "', \"" + value + "\")"; // e.g ("grammar", "+")
         }
 
         public string Type()
