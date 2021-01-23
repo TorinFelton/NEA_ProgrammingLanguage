@@ -14,7 +14,11 @@ namespace Lexer_Module
         {
             contents = new StringQueue(input);
         }
-        public IEnumerable<Token> Tokenise()
+        public IEnumerable<Token> Tokenise() 
+            // IEnumerable allows us to use foreach in C#
+            // Not REQUIRED, but means there is no need to explicitly create a list and return it, instead use 'yield return'
+            // 'yield return' allows you to return each element one at a time
+            // In our case, we are returning each Token object in a list of Tokens
         {
             while (contents.More())
             {
@@ -23,7 +27,7 @@ namespace Lexer_Module
                 // Operators
                 else if ("+-*/^".Contains(character)) yield return new Token("operator", character.ToString());
                 // General Guideline Grammar
-                else if ("(){};=<>!".Contains(character))
+                else if ("(){};=<>!".Contains(character)) // Simply a shortcut to check if the character is any of those in the string
                 {
                     // Check if more tokens past it then check if we've found a comparator operator like "==", ">=", "<="
                     if (contents.More() && "=<>".Contains(contents.Next())) 
@@ -34,10 +38,14 @@ namespace Lexer_Module
                     // else just add single token
                 }
                 // Numbers (only supports integers)
+                // These are not full RegEx statements - they are only to match a SINGLE DIGIT.
                 else if (Regex.IsMatch(character.ToString(), "[0-9]")) yield return new Token("number", Match_GrabChunk(character, "[0-9]"));
+
                 // Identifiers - can have numbers, not at the beginning though
+                // We look at first for a letter, then grab any following letters/numbers
                 else if (Regex.IsMatch(character.ToString(), "[a-zA-Z]")) yield return new Token("identifier", Match_GrabChunk(character, "[a-zA-Z0-9]"));
-                // Strings
+                
+                // Found a quote mark - begin grabbing a string:
                 else if ("\"'".Contains(character)) yield return new Token("string", Char_GrabChunk(character));
                 // Any strange or unrecognisable characters throw an error.
                 else throw new SyntaxError();
