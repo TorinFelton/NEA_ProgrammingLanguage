@@ -9,9 +9,10 @@ namespace Parser_Module
     abstract class Step
     {
         protected string type;
+
         public Step(string type) { this.type = type; }
 
-        public Step() { } // Parmaterless option
+        public Step() {} // Parameterless option for child classes like Event
 
         public string Type()
         {

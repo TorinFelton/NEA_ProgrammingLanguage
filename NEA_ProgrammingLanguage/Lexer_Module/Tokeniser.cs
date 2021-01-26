@@ -8,11 +8,11 @@ namespace Lexer_Module
 {
     class Tokeniser
     {
-        StringQueue contents;
+        private CharQueue contents;
 
         public Tokeniser(string input)
         {
-            contents = new StringQueue(input);
+            contents = new CharQueue(input);
         }
         public IEnumerable<Token> Tokenise() 
             // IEnumerable allows us to use foreach in C#

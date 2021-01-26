@@ -20,13 +20,16 @@ namespace Parser_Module.Events
             this.varValue = varValue;
         }
 
-        public string Name() { return varName; }
-        public string VarType() 
+        public string GetName() { return varName; }
+        public string GetVarType() 
         {
-            if (varType.Equals("int")) return "number";
+            if (varType.Equals("int")) return "number"; 
             else return varType;
+            // Syntax physically written as int, but we generalise to 'number' as we only support Integers.
+            // Programmatically, they are treated as 'number' type. They are just called 'int' in the interpretation
+            // to give a similar syntax style to C++/Java/C# for learning.
         }
-        public List<Token> Value() { return varValue; }
+        public List<Token> Value() { return varValue; } // Naming conflict if called GetValue()
 
         public override string ToString()
         {
@@ -34,6 +37,7 @@ namespace Parser_Module.Events
             foreach (Token tok in varValue) valueTokens.Add(tok.Value());
 
             return "VAR_DECLARE: {type: '" + varType + "', name: '" + varName + "', value tokens: [" + String.Join(", ", valueTokens) + "]}";
+            // Type of variable, name, value
         }
     }
 }

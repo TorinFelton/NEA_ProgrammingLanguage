@@ -12,8 +12,8 @@ namespace Parser_Module
         private List<Token> operand1; // Would be 'x + 10'
         private List<Token> operand2; // Would be '13'
         private string comparator; // Would be '=='
-
-        public IfStatement() { }
+        // If statements only support 1 comparison for now (pattern: OPERAND COMPARATOR OPERAND)
+        // an operand can however be an expression (stored as a list of Tokens)
 
         public IfStatement(List<Step> cbContents, List<Token> op1, List<Token> op2, string comparator)
         {
@@ -24,10 +24,14 @@ namespace Parser_Module
             this.comparator = comparator;
         }
 
+        // No naming conflicts with built-ins so we can use Get__();
+        // GETTERS
         public List<Token> GetOp1() { return operand1; }
         public List<Token> GetOp2() { return operand2; }
         public string GetComparator() { return comparator; }
         public List<Step> GetCBContents() { return codeBlockContents; }
+        // END GETTERS
+
         public override string ToString()
         {
             List<string> operand1String = new List<string>();
@@ -40,7 +44,9 @@ namespace Parser_Module
             {
                 codeBlockString += step.ToString() + "\n";
             }
-            return "(IF) CONDITION: (" + String.Join("", operand1String) + comparator + String.Join("", operand2String) + ")\n CONTENTS: \n" + codeBlockString; // Display condition operands AND each Step operand
+            return "(IF) CONDITION: (" + String.Join("", operand1String) + comparator
+              + String.Join("", operand2String) + ")\n CONTENTS: \n" + codeBlockString;
+            // Display condition operands AND each Step in codeblock
         }
     }
 }

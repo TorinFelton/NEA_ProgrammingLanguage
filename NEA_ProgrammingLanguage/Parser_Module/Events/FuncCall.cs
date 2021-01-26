@@ -10,6 +10,7 @@ namespace Parser_Module.Events
     {
         private string funcName;
         private List<Token> arguments;
+        // Arguments could be an expression or a single element referencing a variable name.
 
         public FuncCall(string funcName, List<Token> arguments)
         {
@@ -18,9 +19,9 @@ namespace Parser_Module.Events
             this.arguments = arguments;
         }
 
-        public string Name() { return funcName; }
+        public string GetName() { return funcName; }
 
-        public List<Token> Arguments() { return arguments; }
+        public List<Token> GetArguments() { return arguments; }
 
         public override string ToString()
         {
@@ -28,6 +29,7 @@ namespace Parser_Module.Events
             foreach (Token tok in arguments) argumentTokens.Add(tok.Value());
 
             return "FUNC_CALL: {name: '" + funcName + "', argument tokens: [" + String.Join(", ", argumentTokens) + "]}";
+            // Return function name and argument (in form of expression represented by Tokens)
         }
     }
 }

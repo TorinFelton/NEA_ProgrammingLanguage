@@ -7,9 +7,7 @@ namespace Parser_Module
 {
     abstract class Event : Step
     {
-
-        public Event() {  }
-
+        public Event() { }
 
     }
 }

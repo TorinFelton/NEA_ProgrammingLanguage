@@ -64,16 +64,16 @@ namespace Evaluator_Module
                 // Declare a variable in the variableScope
                 {
                     VarDeclare varDecl = (VarDeclare)evalStep; // Cast as we know it's a VarDeclare obj
-                    if (variableScope.ContainsKey(varDecl.Name())) throw new DeclareError();
+                    if (variableScope.ContainsKey(varDecl.GetName())) throw new DeclareError();
                     // If scope already has a variable that name, you cannot redeclare it as it already exists.
                     // Potential endpoint if variable exists - entire program will stop (crash).
                     Token varExpr = ResolveExpression(varDecl.Value());
 
-                    if (!varExpr.Type().Equals(varDecl.VarType())) throw new TypeError();
+                    if (!varExpr.Type().Equals(varDecl.GetVarType())) throw new TypeError();
                     // Value of variable does not match type with declared one. e.g 'int x = "Hello";' 
 
 
-                    variableScope.Add(varDecl.Name(), varExpr);
+                    variableScope.Add(varDecl.GetName(), varExpr);
                     // Type of variable can be found out by the .Type() of the key's Token.
                     // e.g 'int x = 1 + 2;'
                     // if we want to find variable 'x' type, we find variableScope[x].Type() which will return 'number', with variableScope[x].Value() being '3'
@@ -83,33 +83,33 @@ namespace Evaluator_Module
                 {
                     VarChange varChan = (VarChange)evalStep; // Cast as we know it is a VarChange obj
 
-                    if (!variableScope.ContainsKey(varChan.Name())) throw new ReferenceError();
+                    if (!variableScope.ContainsKey(varChan.GetName())) throw new ReferenceError();
                     // If variable is NOT in the variableScope then we cannot change it as it doesn't exist.
                     // Potential endpoint for program crash
-                    string varType = variableScope[varChan.Name()].Type();
+                    string varType = variableScope[varChan.GetName()].Type();
                     Token newValue = ResolveExpression(varChan.Value());
 
                     if (!varType.Equals(newValue.Type())) throw new TypeError();
                     // If the new value of the variable is not the right type, then crash.
                     // Potential endpoint
                     // e.g int x = 0; x = "hi"; will cause this error
-                    variableScope[varChan.Name()] = newValue; // Assign new value (Token)
+                    variableScope[varChan.GetName()] = newValue; // Assign new value (Token)
                     
                 }
                 else if (evalStep.Type().Equals("FUNC_CALL"))
                 // Call a function
                 {
                     FuncCall functionCall = (FuncCall)evalStep; // Cast as we know it is a FuncCall obj now
-                    if (!functionCall.Name().Equals("inputstr") && !functionCall.Name().Equals("inputint")) // If NOT calling 'input' function
+                    if (!functionCall.GetName().Equals("inputstr") && !functionCall.GetName().Equals("inputint")) // If NOT calling 'input' function
                     {
-                        CallFunction(functionCall.Name(), ResolveExpression(functionCall.Arguments()));
+                        CallFunction(functionCall.GetName(), ResolveExpression(functionCall.GetArguments()));
                         // Call function with name and *resolved* list of arguments
                         // Resolve function always outputs a single token which is the result of an expression (list of tokens) being evaluated 
                     } else
                         // SPECIAL CASE: Calling inputStr or inputInt functions indicates that the 'argument' is NOT an expression to be resolved, but rather a variable name to store input value in.
                         // This means functionCall.Argumnets() will only have 1 token:
                     {
-                        CallFunction(functionCall.Name(), functionCall.Arguments()[0]); // Pass in first value in Arguments as there only should be one - the variable to be input to
+                        CallFunction(functionCall.GetName(), functionCall.GetArguments()[0]); // Pass in first value in Arguments as there only should be one - the variable to be input to
                     }
                 }
                 else throw new SyntaxError(); // Unrecognised Step, crash program.
