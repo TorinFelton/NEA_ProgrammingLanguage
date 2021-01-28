@@ -1,26 +1,20 @@
-int x = 10*(4+90);
-int y = 10 * 4+90;
-string helloWrld = "";
+int x = 10*(4/1+1)*27+1;
+int y = 0;
+int z = 99999;
 
-if (x == 940) {
-	output("X is: ");
-	outputln(x);
+string found = "false";
 
-	if (y == 130) {
-		output("Y is: ");
+while (found != "true") {
+	if (y == x) {
+		found = "true";
+		output("Found! Y: ");
 		outputln(y);
-
-		outputln("Order of operations works!");
+	} else {
+		if (z == x) {
+			output("Found! Z: ");
+			outputln(z);
+		}
 	}
+	y = y + 1;
+	z = z - 1;
 }
-
-outputln("Give a new value for X: ");
-inputInt(x);
-if (x > 0) { outputln("X is greater than 0!"); }
-
-outputln("Give a string value: ");
-inputStr(helloWrld);
-outputln("Your value: '" + helloWrld + "'");
-
-
-

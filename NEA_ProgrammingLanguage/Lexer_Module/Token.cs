@@ -12,7 +12,7 @@
 
         public override string ToString()
         {
-            return "('" + type + "', \"" + value + "\")"; // e.g ('grammar', "=")
+            return "('" + type + "', \"" + value + "\")"; // e.g ("grammar", "+")
         }
 
         public string Type()

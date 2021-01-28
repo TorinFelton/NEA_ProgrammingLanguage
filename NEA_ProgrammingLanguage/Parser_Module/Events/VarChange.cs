@@ -9,7 +9,8 @@ namespace Parser_Module.Events
     class VarChange : Event
     {
         private string varName;
-        private List<Token> varValue; // List of Tokens for the expression representing the variable's value
+        private List<Token> varValue;
+        // varValue is an expression represented as a list of Tokens
 
         public VarChange(string varName, List<Token> varValue)
         {
@@ -18,9 +19,10 @@ namespace Parser_Module.Events
             this.varValue = varValue;
         }
 
-        public string Name() { return varName; }
+        public string GetName() { return varName; }
 
         public List<Token> Value() { return varValue; }
+        // Value() and not GetValue() as name conflict with built-in
 
         public override string ToString()
         {
@@ -28,6 +30,7 @@ namespace Parser_Module.Events
             foreach (Token tok in varValue) valueTokens.Add(tok.Value());
 
             return "VAR_CHANGE: {name: '" + varName + "', value tokens: [" + String.Join(", ", valueTokens) + "]}";
+            // Return variable name and value expression (as a list of Tokens)
         }
     }
 }

@@ -7,9 +7,7 @@ namespace Parser_Module
 {
     abstract class Event : Step // This class serves no purpose other than to distinguish statements and control flow.
     {
-
-        public Event() {  }
-
+        public Event() { }
 
     }
 }

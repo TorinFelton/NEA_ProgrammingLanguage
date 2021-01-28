@@ -54,12 +54,11 @@ namespace Errors
 
     static class Error
     {
-        public static void ShowError(string err) // Pauses program via input prompt, then kill the program as a whole when enter is pressed
+        public static void ShowError(string err) // Pause program (input prompt) then kill it.
         {
-            Console.WriteLine(err); // Output error
-            Console.WriteLine("Press Enter to quit program.")
-            Console.ReadLine(); // Pause program - pressing 'Enter' will continue
-            Environment.Exit(1); // Kill program process
+            Console.WriteLine(err);
+            Console.ReadLine(); // Used to pause it, Enter required to move on
+            Environment.Exit(1); // Exits process
         }
     }
 }

@@ -11,24 +11,3 @@ while (guess != password) {
 output("You guessed it! Attempts: ");
 outputln(guessAmount);
 
-
-int x = 10239;
-int y = 0;
-int z = 99999;
-
-string found = "false";
-
-while (found != "true") {
-	if (y == x) {
-		found = "true";
-		output("Found! Y: ");
-		outputln(y);
-	} else {
-		if (z == x) {
-			output("Found! Z: ");
-			outputln(z);
-		}
-	}
-	y = y + 1;
-	z = z - 1;
-}

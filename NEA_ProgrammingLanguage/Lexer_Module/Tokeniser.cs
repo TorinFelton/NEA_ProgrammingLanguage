@@ -8,11 +8,11 @@ namespace Lexer_Module
 {
     class Tokeniser
     {
-        StringQueue contents;
+        private CharQueue contents;
 
         public Tokeniser(string input)
         {
-            contents = new StringQueue(input);
+            contents = new CharQueue(input);
         }
 
         // NOTE: The usage of RegEx here is STRICTLY for single character matching to make it quicker to write

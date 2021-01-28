@@ -1,9 +1,10 @@
-﻿using System;
+﻿using Lexer_Module;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Lexer_Module
+namespace Parser_Module
 {
     class TestProgram
     {
@@ -19,11 +20,12 @@ namespace Lexer_Module
             } while (newInput.Length > 0);
             //-------- END OF MULTI-LINE INPUT --------
 
-            Tokeniser tokeniser = new Tokeniser(input);
+            Tokeniser tokeniser = new Tokeniser(input); // Use our Tokeniser to obtain a list of Tokens
 
-            foreach (Token tok in tokeniser.Tokenise()) // Loop through each returned element
+            Parser parse = new Parser(tokeniser.Tokenise().ToList()); // Init parser with Tokens
+            foreach (Step stepObj in parse.ParseTokens())
             {
-                Console.WriteLine(tok.ToString()); // Output makes use of overridden Token.ToString() method
+                Console.WriteLine(stepObj.ToString()); // Output each Step in EvaluationSteps
             }
         }
     }

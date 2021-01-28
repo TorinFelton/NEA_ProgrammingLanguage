@@ -10,17 +10,19 @@ namespace Parser_Module
     class Parser
     {
         private TokenQueue tokQueue;
-        public Parser(List<Token> tokens) { tokQueue = new TokenQueue(tokens); } // Parser constructor, create TokenQueue of input list
-        public List<Step> ParseTokens()
+      
+        public Parser(List<Token> tokens) { tokQueue = new TokenQueue(tokens); }
+
+        public List<Step> ParseTokens() // Due to the size of this method I am not using IEnumerable 'yield return' as it is hard to track nested return statements.
         {
             List<Step> EvaluationSteps = new List<Step>();
 
             while (tokQueue.More()) // While more tokens in queue (returns bool)
             {
-                Token nextTok = tokQueue.MoveNext(); // pop next out of TokenQueue        
+                Token nextTok = tokQueue.MoveNext(); // pop next out of TokenQueue
 
                 if (nextTok.Type().Equals("identifier"))
-                    // All statements in our language begin with identifiers. 
+                    // All statements in our language begin with identifiers.
                     // We do not know what we have at this point, so let's check the identifier to see which tokens should follow after.
                 {
                     if (Syntax.IsType(nextTok.Value()))
@@ -32,7 +34,7 @@ namespace Parser_Module
                          * e.g string testing = "Hello World!";
                          */
 
-                        Event varDeclare = CaptureVarDeclare(nextTok.Value()); // Call method with argument storing the type of var being declared, e.g 'string'
+                        VarDeclare varDeclare = CaptureVarDeclare(nextTok.Value()); // Call method with argument storing the type of var being declared, e.g 'string'
 
                         EvaluationSteps.Add(varDeclare); // Add Event object to the overall list of 'Steps' for the Evaluator module
                     }
@@ -66,23 +68,24 @@ namespace Parser_Module
 
                     else if (nextTok.Value().ToLower().Equals("while"))
                     {
-                        IfStatement template = CaptureIfStatement();
-                        WhileLoop whileLoop = new WhileLoop(template.CBContents(), template.Operand1(), template.Operand2(), template.Comparator());
+                        IfStatement template = CaptureIfStatement(); // Trick the program to think it's capturing an if statement
+                        WhileLoop whileLoop = new WhileLoop(template.GetCBContents(), template.GetOp1(), template.GetOp2(), template.GetComparator());
                         // Reuse code from the if statement because while & if follow the exact same structure:
                         // while (condition) { codeblock }
                         // if (condition) { codeblock }
-                        // We just captured an 'if statement' template then used the information it collected to create a while loop pbject instead
+                        // We just captured an if statement 'template' then used the information it collected to create a while loop instead
 
                         EvaluationSteps.Add(whileLoop);
                     }
 
 
                     else if (GrammarTokenCheck(tokQueue.Next(), "("))
-                    // This condition will return true for an if statement, hence the else if and placement AFTER the 'if' statement check
-                    // Therefore must be start of function
+                      // This condition will also return true if it finds an if/while statement, so it is AFTER the check for those.
+                      // As we're using else if, if the program didn't recognise a 'while' or 'if' statement, we will reach this check
+                      // We can GUARANTEE now that this must be a function call as 'if(){}' and 'while(){}' have been ruled out
                     {
                         /*
-                         * EXPECTED PATTERN: funcName(expr);
+                         * EXPECTED PATTERN: funcName(expr); // Can take any expression!
                          * e.g output("Testing");
                          * e.g output(1 + 23);
                          * e.g output(x);
@@ -92,7 +95,7 @@ namespace Parser_Module
                         // Remember, nextTok still holds the value of the token before '('
                         // This is the name of our function ('funcName')
 
-                        FuncCall funcCall = CaptureFunctionCall(nextTok.Value()); // Pass the function name, e.g 'output' 
+                        FuncCall funcCall = CaptureFunctionCall(nextTok.Value()); // Pass the function name, e.g 'output'
                         EvaluationSteps.Add(funcCall);
                     }
                     else if (GrammarTokenCheck(tokQueue.Next(), "=")) // .Next() is PEEK not POP.
@@ -111,10 +114,10 @@ namespace Parser_Module
                         VarChange varChan = CaptureVarChange(nextTok.Value());
                         EvaluationSteps.Add(varChan);
                     }
-                    else throw new SyntaxError(); 
+                    else throw new SyntaxError();
                     // If there is a rogue 'else' statement it will be caught in this
-                    // Else statements are not 'looked' for on there own, they are only searched for and recognised when an if statement is found
-                }
+                    // Else statements are not 'looked' for on there own, they are only recognised when an if statement is found
+                } else throw new SyntaxError(); // Statement doesn't begin with identifier - throw error.
             }
 
             return EvaluationSteps;
@@ -128,7 +131,7 @@ namespace Parser_Module
             Token nextTok = tokQueue.MoveNext(); // Move to next token in Q
 
             // We expect a variable name to be next, which will be token type 'identifier'. If it is not, we have a syntax error!
-            string varName;
+            string varName; // Cannot declare a variable inside the if statement scope, declare it here
 
             if (nextTok.Type().Equals("identifier")) varName = nextTok.Value(); // Collect Token with name of the variable
             else throw new SyntaxError(); // Throw error if variable name is not an 'identifier' token (invalid syntax)
@@ -160,7 +163,7 @@ namespace Parser_Module
             // Next token after 'if' should be '('
             if (!GrammarTokenCheck(tokQueue.MoveNext(), "(")) throw new SyntaxError(); // Check next token while simulatneously moving along queue
 
-            // Next token(s) should be operands to form a 'condition' 
+            // Next token(s) should be operands to form a 'condition'
             // These token(s) will be inside ( )
             // e.g 'if (x > 0) {}' ==> Capture the "x > 0"
             List<Token> condition = CollectInsideBrackets("(", ")");
@@ -181,7 +184,7 @@ namespace Parser_Module
             // Next token(s) should be all be EVERYTHING inside the code block { }
             // Once again, we need to collect these so we can parse them
             List<Token> codeBlockTokens = CollectInsideBrackets("{", "}");
-            
+
             Parser parseTokens = new Parser(codeBlockTokens); // Create new parser object with only codeblock tokens
             codeBlockContents = parseTokens.ParseTokens(); 
             // (recursion) Call parse function to parse the codeblock tokens and output a list of Step
@@ -213,7 +216,7 @@ namespace Parser_Module
 
             return new ElseStatement(codeBlockContents);
         }
-        
+
         public FuncCall CaptureFunctionCall(string funcName)
         {
             // This is a simple capture - we just need to get all tokens inside the ( )
@@ -256,10 +259,10 @@ namespace Parser_Module
         }
 
         public List<Token> CollectInsideBrackets(string openBracket, string closeBracket)
-            // open & close bracket can technically be anything, but it is generally used for ( ) and { } 
-            // This method allows us to collect everything inside these brackets and can handle nested brackets by balancing them
-            // e.g 'output(1 + (2*(1+2)));' has nested () brackets inside 
-            // This method, applied when the first '(' is found, will collect '1 + (2*(1+2))'
+          // open & close bracket can technically be anything, but it is generally used for '()' and '{}'
+          // This method allows us to collect everything inside these brackets and can handle nested brackets by balancing them
+          // e.g 'output(1 + (2*(1+2)));' has nested () brackets inside
+          // This method, applied when the first '(' is found, will collect '1 + (2*(1+2))'
         {
             int bracket_depth = 0;
             bool keepCollectingTokens = true;
@@ -291,21 +294,23 @@ namespace Parser_Module
 
         public string CollectComparator(List<Token> condition)
         {
+            bool found = false;
+            int index = 0;
             string toReturn = "";
-            foreach (Token tok in condition)
+
+            while (!found && index < condition.Count)
             {
-                if (tok.Type().Equals("grammar"))
+                if (condition[index].Type().Equals("grammar"))
                 {
-                    if (Syntax.IsComparator(tok.Value()))
+                    if (Syntax.IsComparator(condition[index].Value())) // If it is e.g "==" or "!=", etc.
                     {
-                        toReturn = tok.Value();
-                        break; 
-                        // This is a small loop and only has 1 break case, so I feel it is justified.
-                        // If we do not break, we could find another comparator in the expression, which would break the comparison operations.
+                        toReturn = condition[index].Value(); // Return which comparator it is, e.g "=="
+                        found = true; // stop loop
                     }
                 }
+                index++;
             }
-            return toReturn; 
+            return toReturn;
         }
 
         public (List<Token> Operand1, List<Token> Operand2) CaptureOperands(List<Token> condition, string comparator)
@@ -319,7 +324,7 @@ namespace Parser_Module
 
             foreach (Token tok in condition)
             {
-                if (tok.Type().Equals("grammar") && tok.Value().Equals(comparator)) // Make sure grammar token and not a string with value ">" or similar
+                if (GrammarTokenCheck(tok, comparator)) // Make sure grammar token and not a string with value ">" or similar
                 {
                     passedSplitPoint = true;
                 }

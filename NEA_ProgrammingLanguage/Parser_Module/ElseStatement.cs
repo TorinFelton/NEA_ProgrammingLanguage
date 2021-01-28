@@ -10,8 +10,6 @@ namespace Parser_Module
     {
         private List<Step> codeBlockContents; // Every Step inside the else statement code block
 
-        public ElseStatement() { }
-
         public ElseStatement(List<Step> cbContents)
         {
             this.type = "ELSE_STATEMENT";
@@ -19,6 +17,7 @@ namespace Parser_Module
         }
 
         public List<Step> GetCBContents() { return codeBlockContents; }
+
         public override string ToString()
         {
 
@@ -27,7 +26,7 @@ namespace Parser_Module
             {
                 codeBlockString += step.ToString() + "\n";
             }
-            return "(ELSE) CONTENTS: \n" + codeBlockString; // Display condition operands AND each Step operand
+            return "(ELSE) CONTENTS: \n" + codeBlockString; // Display each Step in codeblock
         }
     }
 }
