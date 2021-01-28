@@ -252,7 +252,7 @@ namespace Parser_Module
         }
 
         public List<Token> CollectInsideBrackets(string openBracket, string closeBracket)
-          // open & close bracket can technically be anything, but it is generally used for ( ) and { }
+          // open & close bracket can technically be anything, but it is generally used for '()' and '{}'
           // This method allows us to collect everything inside these brackets and can handle nested brackets by balancing them
           // e.g 'output(1 + (2*(1+2)));' has nested () brackets inside
           // This method, applied when the first '(' is found, will collect '1 + (2*(1+2))'
@@ -315,7 +315,7 @@ namespace Parser_Module
 
             foreach (Token tok in condition)
             {
-                if (tok.Type().Equals("grammar") && tok.Value().Equals(comparator)) // Make sure grammar token and not a string with value ">" or similar
+                if (GrammarTokenCheck(tok, comparator)) // Make sure grammar token and not a string with value ">" or similar
                 {
                     passedSplitPoint = true;
                 }
