@@ -1,4 +1,4 @@
-﻿using Errors;
+using Errors;
 using Evaluator_Module.ExpressionEvaluation.Algorithms;
 using Lexer_Module;
 using Parser_Module;
