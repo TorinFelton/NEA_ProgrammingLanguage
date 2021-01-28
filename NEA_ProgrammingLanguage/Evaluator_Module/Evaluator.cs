@@ -32,13 +32,13 @@ namespace Evaluator_Module
                 {
                     // Evaluate if statement - contains OPERAND1, OPERAND2, COMPARISON, codeBlockContents
                     IfStatement ifState = (IfStatement)evalStep; // Cast as we know it is now an IfStatement obj
-                    bool conditionResult = CompareExpressions(ifState.Operand1(), ifState.Operand2(), ifState.Comparator());
+                    bool conditionResult = CompareExpressions(ifState.GetOp1(), ifState.GetOp2(), ifState.GetComparator());
                     bool hasElse = index + 1 < evaluationSteps.Count && evaluationSteps[index + 1].Type().Equals("ELSE_STATEMENT"); // No chance of index out of range error as set to False before reaching it
 
                     if (conditionResult)
                     // If the 'IfStatement' condition is TRUE
                     {
-                        Evaluate(ifState.CBContents()); // 'run' the contents of the if statement
+                        Evaluate(ifState.GetCBContents()); // 'run' the contents of the if statement
                         if (hasElse) evaluationSteps.RemoveAt(index + 1); // Remove ELSE_STATEMENT as we do not need to evaluate it.
                     }
                     else if (hasElse)
@@ -57,10 +57,10 @@ namespace Evaluator_Module
                     WhileLoop whileLoop = (WhileLoop)evalStep;
                     // Similar to if statement evaluation though no need to set a 'condition' variable because that condition may change
                     // Basically just reusing the C# while loop with the template of the Interpreted one
-                    while (CompareExpressions(whileLoop.Operand1(), whileLoop.Operand2(), whileLoop.Comparator()))
+                    while (CompareExpressions(whileLoop.GetOp1(), whileLoop.GetOp2(), whileLoop.GetComparator()))
                     {
                         // While the condition is true, evaluate code inside
-                        Evaluate(whileLoop.CBContents());
+                        Evaluate(whileLoop.GetCBContents());
                     }
 
                 }
