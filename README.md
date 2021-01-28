@@ -54,6 +54,23 @@ outputln("Your value: '" + helloWrld + "'");
 
 
 ```
+
+  <summary>Running Example Program</summary>
+'>' in the console indicates an input prompt.
+  
+```
+-------------------- PROGRAM STARTED --------------------
+X is: 940
+Y is: 130
+Order of operations works!
+Give a new value for X:
+> 100
+X is greater than 0!
+Give a string value:
+> Hello World
+Your value: 'Hello World'
+-------------------- PROGRAM ENDED --------------------
+```
 </details>
 
 # Addition Notes
@@ -141,22 +158,7 @@ Found! Y 1351
   
 </details>
 </details>
-  <summary>Running Example Program</summary>
-'>' in the console indicates an input prompt.
-  
-```
--------------------- PROGRAM STARTED --------------------
-X is: 940
-Y is: 130
-Order of operations works!
-Give a new value for X:
-> 100
-X is greater than 0!
-Give a string value:
-> Hello World
-Your value: 'Hello World'
--------------------- PROGRAM ENDED --------------------
-```
+
   </details>
   
 

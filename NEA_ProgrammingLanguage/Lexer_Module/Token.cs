@@ -16,9 +16,11 @@
         }
 
         public string Type()
+            // It is easier to name getters as simply Type() or Value() instead of GetType() or GetValue()
+            // as these are built-in methods that shouldn't really be overriden
         {
             return type;
-        } // GetType() is a built-in C# method to get the type of variable, hence this is named Type() instead - no need to override.
+        }
 
         public string Value()
         {

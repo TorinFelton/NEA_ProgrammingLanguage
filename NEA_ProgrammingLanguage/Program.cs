@@ -1,4 +1,4 @@
-﻿using Parser_Module;
+using Parser_Module;
 using Lexer_Module;
 using Evaluator_Module;
 using System;

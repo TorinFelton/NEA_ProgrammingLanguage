@@ -10,6 +10,7 @@ namespace Parser_Module
     class Parser
     {
         private TokenQueue tokQueue;
+      
         public Parser(List<Token> tokens) { tokQueue = new TokenQueue(tokens); }
 
         public List<Step> ParseTokens() // Due to the size of this method I am not using IEnumerable 'yield return' as it is hard to track nested return statements.
@@ -164,8 +165,9 @@ namespace Parser_Module
 
             // Next token(s) should be operands to form a 'condition'
             // These token(s) will be inside ( )
-            // e.g if (x > 0) {} Capture the "x > 0"
+            // e.g 'if (x > 0) {}' ==> Capture the "x > 0"
             List<Token> condition = CollectInsideBrackets("(", ")");
+
             // We need to separate these into OPERAND1, OPERAND2, COMPARATOR to go into the 'operands' list
             // OPERANDs can be any expression, such as 9+1*x, hence we have to collect them carefully
             // We can split the list of tokens by the comparator, but we need to find it first
@@ -176,14 +178,17 @@ namespace Parser_Module
             (List<Token> Operand1, List<Token> Operand2) = CaptureOperands(condition, comparator);
 
             // Next token after ')' should be '{'
-            if (!GrammarTokenCheck(tokQueue.MoveNext(), "{")) throw new SyntaxError(); // Check next token while simulatneously moving along queue
+            if (!GrammarTokenCheck(tokQueue.MoveNext(), "{")) throw new SyntaxError(); 
+            // Check next token while simulatneously moving along queue
 
-            // Next token(s) should all be programming statements inside the code block { }
+            // Next token(s) should be all be EVERYTHING inside the code block { }
             // Once again, we need to collect these so we can parse them
             List<Token> codeBlockTokens = CollectInsideBrackets("{", "}");
 
             Parser parseTokens = new Parser(codeBlockTokens); // Create new parser object with only codeblock tokens
-            codeBlockContents = parseTokens.ParseTokens(); // (semi-recursion) Call parse function to parse the codeblock tokens and output a list of Step
+            codeBlockContents = parseTokens.ParseTokens(); 
+            // (recursion) Call parse function to parse the codeblock tokens and output a list of Step
+            // This will parse codeblock nests from the deepest nest to the furthest out
 
             return new IfStatement(codeBlockContents, Operand1, Operand2, comparator);
         }
@@ -193,6 +198,8 @@ namespace Parser_Module
             List<Step> codeBlockContents = new List<Step>();
             // Called when Next() token is 'else' so we need to skip it:
             tokQueue.MoveNext();
+
+
             // We should be at the beginning of the else codeblock now
             // e.g: else { output("Hi"); }
             //           ^ we are here
@@ -205,7 +212,7 @@ namespace Parser_Module
             List<Token> codeBlockTokens = CollectInsideBrackets("{", "}");
 
             Parser parseTokens = new Parser(codeBlockTokens); // Create new parser object with only codeblock tokens
-            codeBlockContents = parseTokens.ParseTokens(); // (semi-recursion) Call parse function to parse the codeblock tokens and output a list of Step
+            codeBlockContents = parseTokens.ParseTokens(); // (recursion) Call parse function to parse the codeblock tokens and output a list of Step
 
             return new ElseStatement(codeBlockContents);
         }
@@ -263,20 +270,22 @@ namespace Parser_Module
 
             while (keepCollectingTokens)
             {
-                Token collectedTok = tokQueue.MoveNext();
+                Token collectedTok = tokQueue.MoveNext(); // Pop next Token out queue
 
-                if (GrammarTokenCheck(collectedTok, openBracket)) bracket_depth++;
-                else if (GrammarTokenCheck(collectedTok, closeBracket))
+                if (GrammarTokenCheck(collectedTok, openBracket)) bracket_depth++; // If a new codeblock, increase depth of nesting
+                else if (GrammarTokenCheck(collectedTok, closeBracket)) // If end of code block
                 {
                     if (bracket_depth == 0)
                     // Brackets already balanced, we have found the closing bracket that marks the end of the condition operands
                     {
                         keepCollectingTokens = false; // Finish collecting, will cause the final closing bracket to NOT be added to operands and stop the loop.
                     }
-                    else bracket_depth--;
+                    else bracket_depth--; // If we are still nested in but have ended a codeblock, decrease nesting depth
                 }
 
-                if (keepCollectingTokens) toCollect.Add(collectedTok); // If statement prevents the closing bracket at the end being added to the tokens as it is not part of the expression inside
+                if (keepCollectingTokens) toCollect.Add(collectedTok); 
+                    // If keepCollectingTokens is TRUE, we are still in the code block nest
+                    // If NOT, we have finished collecting then collectedTok is a closing bracket - we do not want this added.
 
             }
 
@@ -301,11 +310,11 @@ namespace Parser_Module
                 }
                 index++;
             }
-
             return toReturn;
         }
 
         public (List<Token> Operand1, List<Token> Operand2) CaptureOperands(List<Token> condition, string comparator)
+            // We can't use a built-in Split List method as it won't check our Token objects are type 'grammar'
             // Split expression (below in token form) e.g:
             // Split ['2', '+', '1', '>', '1', '*', '3'] by '>'
         {
