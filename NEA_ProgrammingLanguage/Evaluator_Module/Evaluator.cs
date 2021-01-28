@@ -1,4 +1,4 @@
-﻿using Errors;
+using Errors;
 using Evaluator_Module.ExpressionEvaluation.Algorithms;
 using Lexer_Module;
 using Parser_Module;
@@ -16,23 +16,53 @@ namespace Evaluator_Module
         public Evaluator()
         {
             this.variableScope = new Dictionary<string, Token>();
+            // Variables are all stored in this dictionary
+            // Their value is stored as a single Token object
+            // Remember from Tokeniser - Tokens can have types like 'number' or 'string' (but all are *stored* as strings)
+            // To check a variable type, we check the type of its Token (e.g if its 'number' we have an integer variable)
         }
 
         public void Evaluate(List<Step> evaluationSteps)
         {
-            foreach (Step evalStep in evaluationSteps)
+            for (int index = 0; index < evaluationSteps.Count; index++)
             {
+                Step evalStep = evaluationSteps[index];
                 // .Type() can only be "VAR_DECLARE", "VAR_CHANGE", "FUNC_CALL", "IF_STATEMENT"
                 if (evalStep.Type().Equals("IF_STATEMENT"))
                 {
                     // Evaluate if statement - contains OPERAND1, OPERAND2, COMPARISON, codeBlockContents
                     IfStatement ifState = (IfStatement)evalStep; // Cast as we know it is now an IfStatement obj
+                    bool conditionResult = CompareExpressions(ifState.GetOp1(), ifState.GetOp2(), ifState.GetComparator());
+                    bool hasElse = index + 1 < evaluationSteps.Count && evaluationSteps[index + 1].Type().Equals("ELSE_STATEMENT"); // No chance of index out of range error as set to False before reaching it
 
-                    if (CompareExpressions(ifState.GetOp1(), ifState.GetOp2(), ifState.GetComparator()))
+                    if (conditionResult)
                     // If the 'IfStatement' condition is TRUE
                     {
-                        Evaluate(ifState.GetCBContents()); // 'run' the contents of the if statement 
-                    } // else just do nothing... we skip the if statement as the condition is FALSE.
+                        Evaluate(ifState.GetCBContents()); // 'run' the contents of the if statement
+                        if (hasElse) evaluationSteps.RemoveAt(index + 1); // Remove ELSE_STATEMENT as we do not need to evaluate it.
+                    }
+                    else if (hasElse)
+                    {
+                        // Else if there is at least 1 more step in the list left and the next one is an 'else'
+
+                        ElseStatement elseState = (ElseStatement)evaluationSteps[index+1];
+                        // Cast to else
+                        Evaluate(elseState.GetCBContents()); // 'run' the contents of the else
+
+                        evaluationSteps.RemoveAt(index + 1); // Remove ELSE_STATEMENT as we have used it and do not want to go over it again.
+                    }
+                }
+                else if (evalStep.Type().Equals("WHILE_LOOP"))
+                {
+                    WhileLoop whileLoop = (WhileLoop)evalStep;
+                    // Similar to if statement evaluation though no need to set a 'condition' variable because that condition may change
+                    // Basically just reusing the C# while loop with the template of the Interpreted one
+                    while (CompareExpressions(whileLoop.GetOp1(), whileLoop.GetOp2(), whileLoop.GetComparator()))
+                    {
+                        // While the condition is true, evaluate code inside
+                        Evaluate(whileLoop.GetCBContents());
+                    }
+
                 }
                 else if (evalStep.Type().Equals("VAR_DECLARE"))
                 // Declare a variable in the variableScope
@@ -140,7 +170,7 @@ namespace Evaluator_Module
             else if (exprResultType.Equals("number"))
                 // Indicates we are dealing with a mathematical expression
             {
-                TreeNode root = TreeBuilder.BuildAST(expr); // Create abstract syntax tree of mathematical expression
+                TreeNode root = Postfix.BuildAST(expr); // Create abstract syntax tree of mathematical expression
 
                 int result = RPN.Evaluate(Traversal.postOrder(root)); // Calculate result of RPN algorithm calculation
 
@@ -210,10 +240,11 @@ namespace Evaluator_Module
             if (resolvedOp1.Type().Equals("string") && resolvedOp2.Type().Equals("string"))
             {
                 if (comparison.Equals("==")) toReturn = TokenEqual(resolvedOp1, resolvedOp2);
+                else if (comparison.Equals("!=")) toReturn = !TokenEqual(resolvedOp1, resolvedOp2);
                 else throw new ComparisonError(); // Cannot do any other comparison on strings.
 
-            } else {
-                int op1Integer;
+            } else { // Any comparison that isn't == or != can ONLY be done on numbers
+                int op1Integer; // We need to conver the number Tokens to actual Integers for comparison
                 int op2Integer;
                 if (resolvedOp1.Type().Equals("number") && resolvedOp2.Type().Equals("number"))
                 {
@@ -224,11 +255,15 @@ namespace Evaluator_Module
 
                 switch (comparison)
                 {
-                    case "==":
+                    case "==": // TokenEqual just checks type & value of Tokens are equal. No need to convert to C# Integer type.
                         toReturn = TokenEqual(resolvedOp1, resolvedOp2);
+                        break;
+                    case "!=":
+                        toReturn = !TokenEqual(resolvedOp1, resolvedOp2);
                         break;
                     case "<=":
                         // Check if equal or if less than. 
+                        // Note TokenEqual takes in Tokens, OR we can compare their raw Integer values
                         toReturn = TokenEqual(resolvedOp1, resolvedOp2) || (op1Integer < op2Integer);
                         break;
                     case ">=":
@@ -252,26 +287,29 @@ namespace Evaluator_Module
 
         public bool TokenEqual(Token tok1, Token tok2) { return tok1.Type().Equals(tok2.Type()) && tok1.Value().Equals(tok2.Value()); }
         // Checks both type and value of a token are equal
+        // simplified: return tok1.Type == tok2.Type && tok1.Value == tok2.Value
+        // Using .Equals instead of == to avoid wrong definition of 'equal', .Equals is for literal equality in value
 
         public void CallFunction(string funcName, Token argument)
             // As this is a simple language, functions can only take one argument.
         {
-            funcName = funcName.ToLower();
-            if (funcName.Equals("output")) Console.Write(argument.Value());
-            else if (funcName.Equals("outputln")) Console.WriteLine(argument.Value());
+            funcName = funcName.ToLower(); // We do not need to be case sensitive for our language.
+            if (funcName.Equals("output")) Console.Write(argument.Value()); // Write to console with no new line
+            else if (funcName.Equals("outputln")) Console.WriteLine(argument.Value()); // Write with new line
             else if (funcName.Equals("inputstr"))
             {
-                string varName = argument.Value();
+                string varName = argument.Value(); // Argument passed into input() function is a VARIABLE NAME REFERENCE
 
                 if (!variableScope.ContainsKey(varName)) throw new ReferenceError();
                 // If variable to input to doesn't exist there is an error
+
                 if (!variableScope[varName].Type().Equals("string")) throw new TypeError();
                 // inputStr() being done to a non-string variable causes an error
 
                 Console.Write("> "); // Automatic input prompt
                 string input = Console.ReadLine();
 
-                variableScope[varName] = new Token("string", input);
+                variableScope[varName] = new Token("string", input); // Change value of variable to the input string
             }
             else if (funcName.Equals("inputint"))
             {
@@ -279,6 +317,7 @@ namespace Evaluator_Module
 
                 if (!variableScope.ContainsKey(varName)) throw new ReferenceError();
                 // If variable to input to doesn't exist there is an error
+
                 if (!variableScope[varName].Type().Equals("number")) throw new TypeError();
                 // inputInt() being done to a non-number variable causes an error
 
@@ -292,7 +331,9 @@ namespace Evaluator_Module
                 {
                     // if input is not a number, cause error
                     throw new TypeError();
-                }
+                } 
+                // It looks weird to catch and then throw an error anyway, but I've done it so I can use my custom TypeError() instead of C#'s one
+                // My TypeError() will come up with a simple message and pause, the C# in-built error will kill the console window instead.
 
                 variableScope[varName] = new Token("number", input.ToString());
                 // The input is converted to an integer originally to check it is ACTUALLY a valid integer
