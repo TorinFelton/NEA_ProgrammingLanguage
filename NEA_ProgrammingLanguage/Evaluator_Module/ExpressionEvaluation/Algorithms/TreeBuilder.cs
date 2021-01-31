@@ -7,7 +7,7 @@ using Errors;
 
 namespace Evaluator_Module.ExpressionEvaluation.Algorithms
 {
-    class Postfix
+    class TreeBuilder
     {
         public static TreeNode BuildAST(List<Token> infix)
         /*

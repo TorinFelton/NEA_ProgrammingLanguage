@@ -1,4 +1,4 @@
-﻿using Errors;
+using Errors;
 using Evaluator_Module.ExpressionEvaluation.Algorithms;
 using Lexer_Module;
 using Parser_Module;
@@ -170,7 +170,7 @@ namespace Evaluator_Module
             else if (exprResultType.Equals("number"))
                 // Indicates we are dealing with a mathematical expression
             {
-                TreeNode root = Postfix.BuildAST(expr); // Create abstract syntax tree of mathematical expression
+                TreeNode root = TreeBuilder.BuildAST(expr); // Create abstract syntax tree of mathematical expression
 
                 int result = RPN.Evaluate(Traversal.postOrder(root)); // Calculate result of RPN algorithm calculation
 
