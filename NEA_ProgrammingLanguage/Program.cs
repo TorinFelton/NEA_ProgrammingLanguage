@@ -13,8 +13,8 @@ namespace NEA_ProgrammingLanguage
         static void Main(string[] args)
         {
             // Parser_Module.TestProgram.Run();
-             //Lexer_Module.TestProgram.Run();
-            // ExpressionEvaluation.TestProgram.Run();
+            //Lexer_Module.TestProgram.Run();
+            //Evaluator_Module.ExpressionEvaluation.TestProgram.Run();
             // Evaluator_Module.ExpressionEvaluation.TestProgram.Run();
 
 
