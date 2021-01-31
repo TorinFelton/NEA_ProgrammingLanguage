@@ -40,6 +40,7 @@ namespace Evaluator_Module.ExpressionEvaluation.Algorithms
 
             foreach (Token token in infix)
             {
+
                 if (token.Value().Equals("(")) operatorStack.Push(new BinOp("("));
                 // If it is the opening of a nested expression, just add it to the opstack - precedences values will be dealt with later
 
@@ -65,11 +66,19 @@ namespace Evaluator_Module.ExpressionEvaluation.Algorithms
                         // This will be the parent node of our 'leaf'
                         // the '+' in the example in the topmost comment
 
-                        // Reversed as the second op was pushed at the end
-                        binOperator.right = numStack.Pop();
-                        binOperator.left = numStack.Pop();
-                        // child nodes '1' and '2' added (following example in top comment)
-                        // The numstack does not just contain raw Integer nodes, it could have another leaf (a leaf resolves to an Integer)
+                        if (binOperator.value.Equals("_")) // unary minus
+                        {
+                            binOperator.left = numStack.Pop();
+                        }
+
+                        else
+                        {
+                            // Reversed as the second op was pushed at the end
+                            binOperator.right = numStack.Pop();
+                            binOperator.left = numStack.Pop();
+                            // child nodes '1' and '2' added (following example in top comment)
+                            // The numstack does not just contain raw Integer nodes, it could have another leaf (a leaf resolves to an Integer)
+                        }
 
                         numStack.Push(binOperator); // Leaf created! Now push parent node of leaf back onto numStack
                     }
@@ -84,9 +93,20 @@ namespace Evaluator_Module.ExpressionEvaluation.Algorithms
                     while (operatorStack.Count > 0 && !operatorStack.Peek().value.Equals("("))
                     {
                         BinOp binOperator = operatorStack.Pop();
-                        // Reversed as the second op was pushed at the end
-                        binOperator.right = numStack.Pop();
-                        binOperator.left = numStack.Pop();
+
+                        if (binOperator.value.Equals("_")) // unary minus
+                        {
+                            binOperator.left = numStack.Pop();
+                        }
+
+                        else
+                        {
+                            // Reversed as the second op was pushed at the end
+                            binOperator.right = numStack.Pop();
+                            binOperator.left = numStack.Pop();
+                            // child nodes '1' and '2' added (following example in top comment)
+                            // The numstack does not just contain raw Integer nodes, it could have another leaf (a leaf resolves to an Integer)
+                        }
 
                         numStack.Push(binOperator);
                     }
@@ -105,9 +125,20 @@ namespace Evaluator_Module.ExpressionEvaluation.Algorithms
             while (operatorStack.Count > 0) // Same leaf-making loop as before but with slightly different condition
             {
                 BinOp binOperator = operatorStack.Pop();
-                // Reversed as the second op was pushed at the end
-                binOperator.right = numStack.Pop();
-                binOperator.left = numStack.Pop();
+
+                if (binOperator.value.Equals("_")) // unary minus
+                {
+                    binOperator.left = numStack.Pop();
+                }
+
+                else
+                {
+                    // Reversed as the second op was pushed at the end
+                    binOperator.right = numStack.Pop();
+                    binOperator.left = numStack.Pop();
+                    // child nodes '1' and '2' added (following example in top comment)
+                    // The numstack does not just contain raw Integer nodes, it could have another leaf (a leaf resolves to an Integer)
+                }
 
                 numStack.Push(binOperator);
             } // While there are still operators left, make leaves of the remaining with their operands until no more to make
@@ -117,5 +148,32 @@ namespace Evaluator_Module.ExpressionEvaluation.Algorithms
             // we have NOT calculated anything - just built a tree of the expression and returned its root as a TreeNode.
         }
 
+        public static List<Token> findUnaryMinus(List<Token> exprTokens)
+        {
+            List<Token> toReturn = new List<Token>();
+
+            int index = 0;
+
+            while (index < exprTokens.Count)
+            {
+                Token tok = exprTokens[index];
+                if (tok.Type().Equals("operator"))
+                {
+                    if (tok.Value().Equals("-"))
+                    {
+                        if (index == 0 || exprTokens[index - 1].Value().Equals("(") || exprTokens[index - 1].Type().Equals("operator"))
+                        {
+                            // unary as '-' at the beginnign of expr
+                            toReturn.Add(new Token("operator", "_"));
+                        }
+                    }
+                    else toReturn.Add(tok);
+                }
+                else toReturn.Add(tok);
+                index++;
+            }
+
+            return toReturn;
+        }
     }
 }

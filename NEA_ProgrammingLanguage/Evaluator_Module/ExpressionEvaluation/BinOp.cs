@@ -9,6 +9,7 @@ namespace Evaluator_Module.ExpressionEvaluation
         public static Dictionary<string, int> precedences = new Dictionary<string, int>()
         {
             {"^", 4 },
+            {"_", 4 },
             {"*", 3 },
             {"/", 3 },
             {"+", 2 },
