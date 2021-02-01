@@ -12,12 +12,14 @@ namespace NEA_ProgrammingLanguage
     {
         static void Main(string[] args)
         {
-            // Parser_Module.TestProgram.Run();
-            //Lexer_Module.TestProgram.Run();
-            //Evaluator_Module.ExpressionEvaluation.TestProgram.Run();
-            // Evaluator_Module.ExpressionEvaluation.TestProgram.Run();
 
+            // Test programs to run in case of problems:
+              // Parser_Module.TestProgram.Run();
+              // Lexer_Module.TestProgram.Run();
+              // Evaluator_Module.ExpressionEvaluation.TestProgram.Run();
+              // Evaluator_Module.ExpressionEvaluation.TestProgram.Run();
 
+            // FILE INPUT
             bool invalid = true;
             string toRun = "";
             while (invalid) {
@@ -32,19 +34,19 @@ namespace NEA_ProgrammingLanguage
                     Console.WriteLine("Invalid file name.");
                 }
             }
+            // END OF FILE INPUT
 
             Console.WriteLine("-------------------- PROGRAM STARTED --------------------");
-            Tokeniser tokeniser = new Tokeniser(toRun);
-            List<Token> tokens = tokeniser.Tokenise().ToList();
 
-            //Console.WriteLine(String.Join("\n", tokens));
+            Tokeniser tokeniser = new Tokeniser(toRun); // TOKENISE FILE CONTENTS
+            List<Token> tokens = tokeniser.Tokenise().ToList(); // ToList() will put the output of the IEnumerable straight into 'tokens'
 
+            Parser parseTok = new Parser(tokens); // PARSE TOKENISED PROGRAM
+            List<Step> evalSteps = parseTok.ParseTokens(); // CREATE EvaluationSteps for EVALUATOR_MODULE
 
-            Parser parseTok = new Parser(tokens);
-            List<Step> evalSteps = parseTok.ParseTokens();
+            Evaluator eval = new Evaluator(); // Init Evaluator
+            eval.Evaluate(evalSteps); // EVALUATE EvaluationSteps
 
-            Evaluator eval = new Evaluator();
-            eval.Evaluate(evalSteps);
             Console.WriteLine("-------------------- PROGRAM ENDED --------------------");
 
         }

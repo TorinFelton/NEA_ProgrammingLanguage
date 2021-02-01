@@ -27,7 +27,8 @@ namespace Evaluator_Module
             for (int index = 0; index < evaluationSteps.Count; index++)
             {
                 Step evalStep = evaluationSteps[index];
-                // .Type() can only be "VAR_DECLARE", "VAR_CHANGE", "FUNC_CALL", "IF_STATEMENT"
+                // .Type() can only be "VAR_DECLARE", "VAR_CHANGE", "FUNC_CALL", "IF_STATEMENT", "WHILE_LOOP"
+                // It could also be "ELSE_STATEMENT", but we should only check for that DIRECTLY after an IF_STATEMENT
                 if (evalStep.Type().Equals("IF_STATEMENT"))
                 {
                     // Evaluate if statement - contains OPERAND1, OPERAND2, COMPARISON, codeBlockContents
@@ -38,16 +39,17 @@ namespace Evaluator_Module
                     if (conditionResult)
                     // If the 'IfStatement' condition is TRUE
                     {
-                        Evaluate(ifState.GetCBContents()); // 'run' the contents of the if statement
-                        if (hasElse) evaluationSteps.RemoveAt(index + 1); // Remove ELSE_STATEMENT as we do not need to evaluate it.
+                        Evaluate(ifState.GetCBContents()); // 'run' the contents of the if statement - this is RECURSIVE
+                        if (hasElse) evaluationSteps.RemoveAt(index + 1);
+                        // If we have an ELSE_STATEMENT after this, we need to remove it as the IF_STATEMENT has triggered (therefore the ELSE will not be triggered).
                     }
                     else if (hasElse)
                     {
-                        // Else if there is at least 1 more step in the list left and the next one is an 'else'
+                        // If the CONDITION is FALSE and the next Step obj is an ELSE_STATEMENT type
 
                         ElseStatement elseState = (ElseStatement)evaluationSteps[index+1];
                         // Cast to else
-                        Evaluate(elseState.GetCBContents()); // 'run' the contents of the else
+                        Evaluate(elseState.GetCBContents()); // 'run' the contents of the else (RECURSION)
 
                         evaluationSteps.RemoveAt(index + 1); // Remove ELSE_STATEMENT as we have used it and do not want to go over it again.
                     }
@@ -74,7 +76,7 @@ namespace Evaluator_Module
                     Token varExpr = ResolveExpression(varDecl.Value());
 
                     if (!varExpr.Type().Equals(varDecl.GetVarType())) throw new TypeError();
-                    // Value of variable does not match type with declared one. e.g 'int x = "Hello";' 
+                    // Value of variable does not match type with declared one. e.g 'int x = "Hello";'
 
 
                     variableScope.Add(varDecl.GetName(), varExpr);
@@ -98,7 +100,7 @@ namespace Evaluator_Module
                     // Potential endpoint
                     // e.g int x = 0; x = "hi"; will cause this error
                     variableScope[varChan.GetName()] = newValue; // Assign new value (Token)
-                    
+
                 }
                 else if (evalStep.Type().Equals("FUNC_CALL"))
                 // Call a function
@@ -108,7 +110,7 @@ namespace Evaluator_Module
                     {
                         CallFunction(functionCall.GetName(), ResolveExpression(functionCall.GetArguments()));
                         // Call function with name and *resolved* list of arguments
-                        // Resolve function always outputs a single token which is the result of an expression (list of tokens) being evaluated 
+                        // Resolve function always outputs a single token which is the result of an expression (list of tokens) being evaluated
                     } else
                         // SPECIAL CASE: Calling inputStr or inputInt functions indicates that the 'argument' is NOT an expression to be resolved, but rather a variable name to store input value in.
                         // This means functionCall.Argumnets() will only have 1 token:
@@ -146,7 +148,7 @@ namespace Evaluator_Module
                     // We must be dealing with concatenation
                     if (!expr[0].Type().Equals("string")) throw new SyntaxError();
                     // Concatenation expressions MUST start with a string
-                    // e.g string x = + "Hello World"; will cause ERROR as expr starts with '+' 
+                    // e.g string x = + "Hello World"; will cause ERROR as expr starts with '+'
 
                     string finalResult = expr[0].Value(); // First string in expression
                     int index = 1;
@@ -262,12 +264,12 @@ namespace Evaluator_Module
                         toReturn = !TokenEqual(resolvedOp1, resolvedOp2);
                         break;
                     case "<=":
-                        // Check if equal or if less than. 
+                        // Check if equal or if less than.
                         // Note TokenEqual takes in Tokens, OR we can compare their raw Integer values
                         toReturn = TokenEqual(resolvedOp1, resolvedOp2) || (op1Integer < op2Integer);
                         break;
                     case ">=":
-                        // Check if equal or greater than. 
+                        // Check if equal or greater than.
                         toReturn = TokenEqual(resolvedOp1, resolvedOp2) || (op1Integer > op2Integer);
                         break;
                     case "<":
@@ -331,7 +333,7 @@ namespace Evaluator_Module
                 {
                     // if input is not a number, cause error
                     throw new TypeError();
-                } 
+                }
                 // It looks weird to catch and then throw an error anyway, but I've done it so I can use my custom TypeError() instead of C#'s one
                 // My TypeError() will come up with a simple message and pause, the C# in-built error will kill the console window instead.
 
