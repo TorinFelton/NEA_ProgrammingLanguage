@@ -1,5 +1,6 @@
 using Errors;
 using Evaluator_Module.ExpressionEvaluation.Algorithms;
+using Evaluator_Module.ExpressionEvaluation.Conditions;
 using Lexer_Module;
 using Parser_Module;
 using Parser_Module.Events;
@@ -32,7 +33,9 @@ namespace Evaluator_Module
                 {
                     // Evaluate if statement - contains OPERAND1, OPERAND2, COMPARISON, codeBlockContents
                     IfStatement ifState = (IfStatement)evalStep; // Cast as we know it is now an IfStatement obj
-                    bool conditionResult = CompareExpressions(ifState.GetOp1(), ifState.GetOp2(), ifState.GetComparator());
+
+                    bool conditionResult = ResolveBoolean(ifState.GetCondition());
+
                     bool hasElse = index + 1 < evaluationSteps.Count && evaluationSteps[index + 1].Type().Equals("ELSE_STATEMENT"); // No chance of index out of range error as set to False before reaching it
 
                     if (conditionResult)
@@ -57,7 +60,7 @@ namespace Evaluator_Module
                     WhileLoop whileLoop = (WhileLoop)evalStep;
                     // Similar to if statement evaluation though no need to set a 'condition' variable because that condition may change
                     // Basically just reusing the C# while loop with the template of the Interpreted one
-                    while (CompareExpressions(whileLoop.GetOp1(), whileLoop.GetOp2(), whileLoop.GetComparator()))
+                    while (ResolveBoolean(whileLoop.GetCondition()))
                     {
                         // While the condition is true, evaluate code inside
                         Evaluate(whileLoop.GetCBContents());
@@ -120,7 +123,7 @@ namespace Evaluator_Module
             }
         }
 
-        public Token ResolveExpression(List<Token> expr) // TODO
+        public Token ResolveExpression(List<Token> expr)
         {
             Token toReturn = new Token("", "");
 
@@ -172,15 +175,72 @@ namespace Evaluator_Module
             {
                 TreeNode root = TreeBuilder.BuildAST(expr); // Create abstract syntax tree of mathematical expression
 
-                int result = RPN.Evaluate(Traversal.postOrder(root)); // Calculate result of RPN algorithm calculation
+                int result = ExpressionEvaluation.Algorithms.RPN.Evaluate(Traversal.postOrder(root)); // Calculate result of RPN algorithm calculation
 
                 toReturn = new Token("number", result.ToString());
+            }
+            else if (exprResultType.Equals("bool"))
+            {
+                toReturn = new Token("bool", ResolveBoolean(expr).ToString());
             }
             else throw new SyntaxError(); // invalid expression type has somehow made it through, we cannot evaluate it so throw error.
 
             return toReturn;
         }
 
+        public bool ResolveBoolean(List<Token> boolExpr)
+        {
+            int index = 0;
+            Token currentTok;
+            List<Token> resolvedExpr = new List<Token>();
+            List<Token> tempExpr = new List<Token>();
+            string comparison = "";
+
+            boolExpr = VariablesToValues(boolExpr);
+
+            while (index < boolExpr.Count)
+            {
+                currentTok = boolExpr[index];
+
+                if (currentTok.Type().Equals("grammar") && (currentTok.Value().Equals("&&") || currentTok.Value().Equals("||")))
+                {
+                    comparison = Parser.CollectComparator(tempExpr);
+                    if (comparison.Length > 0)
+                    {
+                        (List<Token> op1, List<Token> op2) = Parser.CaptureOperands(tempExpr, comparison);
+
+                        resolvedExpr.Add(new Token("bool", CompareExpressions(op1, op2, comparison).ToString()));
+                    } else // no comparator, must be a bool already
+                    {
+                        resolvedExpr.AddRange(tempExpr);
+                    }
+                    resolvedExpr.Add(currentTok); // add the || or && to the logic expr
+
+
+                    tempExpr = new List<Token>();
+                } else tempExpr.Add(currentTok);
+                index++;
+            }
+
+            comparison = Parser.CollectComparator(tempExpr);
+            if (comparison.Length > 0)
+            {
+                (List<Token> op1, List<Token> op2) = Parser.CaptureOperands(tempExpr, comparison);
+
+                resolvedExpr.Add(new Token("bool", CompareExpressions(op1, op2, comparison).ToString()));
+            }
+            else // no comparator, must be a bool already
+            {
+                resolvedExpr.AddRange(tempExpr);
+            }
+            
+            return
+                ExpressionEvaluation.Conditions.RPN.Evaluate(
+                    Traversal.postOrder(
+                        ConditionTree.BuildAST(resolvedExpr)
+                        )
+                );
+        }
         public List<Token> VariablesToValues(List<Token> expr)
         {
             // Replace each variable in an expression with the value it references
@@ -214,21 +274,21 @@ namespace Evaluator_Module
             // e.g 1 + 1 will work
             // e.g "1" + "1" will work
             // e.g "1" + 1 will cause an ERROR.
-            bool foundNumber = false;
-            bool foundString = false;
+            string type = "";
+            bool valid = true;
 
-            foreach (Token tok in expr)
+            for (int index = 0; index < expr.Count; index++)
             {
-                if (!tok.Type().Equals("grammar"))
+                if (!(expr[index].Type().Equals("grammar") || expr[index].Type().Equals("operator")))
                 {
-                    if (tok.Type().Equals("number")) foundNumber = true;
-                    else if (tok.Type().Equals("string")) foundString = true;
+                    if (type.Length == 0) type = expr[index].Type();
+                    else if (!expr[index].Type().Equals(type)) valid = false; // If type is not consistent with previous set, invalid expr.
                 }
             }
 
-            if (foundString == foundNumber) throw new TypeMatchError(); // Found either both or neither "string" and "number" types in same expression, causes error.
-            else if (foundNumber) return "number";
-            else return "string"; // Must be a string if not foundNumber and not foundString == foundNumber == false.
+            if (!valid) throw new TypeMatchError(); // Found either both or neither "string" and "number" types in same expression, causes error.
+            if (type == "") throw new SyntaxError(); // Strange case - no expression contents to check, just grammar or nothing
+            else return type;
         }
 
         public bool CompareExpressions(List<Token> op1, List<Token> op2, string comparison)
@@ -284,6 +344,8 @@ namespace Evaluator_Module
 
             return toReturn;
         }
+
+
 
         public bool TokenEqual(Token tok1, Token tok2) { return tok1.Type().Equals(tok2.Type()) && tok1.Value().Equals(tok2.Value()); }
         // Checks both type and value of a token are equal

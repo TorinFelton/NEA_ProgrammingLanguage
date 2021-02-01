@@ -30,7 +30,7 @@ namespace Lexer_Module
         {
             while (contents.More()) // While elements left in queue of chars
             {
-                char character = contents.MoveNext(); 
+                char character = contents.MoveNext();
 
                 // I'll be using the a shortcut to check what the character is: String.Contains(char)
                 // This is faster to write than 'if character == "+" || character == "-" etc...'
@@ -41,12 +41,12 @@ namespace Lexer_Module
                 else if ("+-*/^".Contains(character)) yield return new Token("operator", character.ToString());
 
                 // General Guideline Grammar
-                else if ("(){};=<>!".Contains(character)) 
+                else if ("(){};=<>!|&".Contains(character))
                 {
                     // Check if more tokens past it then check if we've found a comparator operator like "==", ">=", "<="
-                    if (contents.More() && "=<>".Contains(contents.Next())) 
+                    if (contents.More() && "=<>&|".Contains(contents.Next()))
                         yield return new Token("grammar", character.ToString() + contents.MoveNext().ToString());
-                        // If the next token is ALSO "=" or "<" or ">", then add both tokens together as one to form "==", "!=", "<=", ">="
+                    // If the next token is ALSO "=" or "<" or ">", then add both tokens together as one to form "==", "!=", "<=", ">="
 
                     else yield return new Token("grammar", character.ToString());
                     // else just add single token
@@ -57,8 +57,13 @@ namespace Lexer_Module
 
                 // Identifiers - can have numbers, not at the beginning though
                 // We look at first for a letter, then grab any following letters/numbers
-                else if (Regex.IsMatch(character.ToString(), "[a-zA-Z]")) yield return new Token("identifier", Match_GrabChunk(character, "[a-zA-Z0-9]"));
-                
+                else if (Regex.IsMatch(character.ToString(), "[a-zA-Z]"))
+                {
+                    string identifier = Match_GrabChunk(character, "[a-zA-Z0-9]");
+                    if (identifier.ToLower().Equals("true") || identifier.ToLower().Equals("false")) yield return new Token("bool", identifier);
+                    else yield return new Token("identifier", identifier);
+                }
+
                 // Strings can be denoted by ' or " in our language. If we find one of those, grab the rest of the string:
                 else if ("\"'".Contains(character)) yield return new Token("string", Char_GrabChunk(character));
 

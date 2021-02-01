@@ -1,11 +1,22 @@
-﻿string password = "abc123";
+﻿if (((true && (false || !false)))) { outputln("IT WORKS!"); }
+
+bool hello = true;
+outputln(hello);
+hello = !hello;
+outputln(hello);
+hello = ((true && (false || !false)));
+
+bool valid = false;
+
+string password = "abc123";
 string guess = "";
 int guessAmount = 0;
 
-while (guess != password) {
+while (!valid) {
 	outputln("Guess the password.");
 	inputStr(guess);
 	guessAmount = guessAmount + 1;
+	if (guess == password) { valid = true; }
 }
 
 output("You guessed it! Attempts: ");

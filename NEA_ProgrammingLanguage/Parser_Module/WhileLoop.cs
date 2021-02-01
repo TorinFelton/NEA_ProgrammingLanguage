@@ -9,7 +9,7 @@ namespace Parser_Module
     {
         // As a while loop follows the same structure as an if statement, we can just inherit EVERYTHING from the IfStatement object
         // A while loop is just an if statement that runs again until the condition is false.
-        public WhileLoop(List<Step> cbContents, List<Token> op1, List<Token> op2, string comparator) : base(cbContents, op1, op2, comparator)
+        public WhileLoop(List<Step> cbContents, List<Token> condition) : base(cbContents, condition)
             // base() refers to the IfStatement() constructor
         {
             this.type = "WHILE_LOOP"; // The ONLY difference between this class and the IfStatement.

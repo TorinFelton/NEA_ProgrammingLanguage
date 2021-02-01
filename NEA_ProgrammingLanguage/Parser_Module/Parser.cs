@@ -69,7 +69,7 @@ namespace Parser_Module
                     else if (nextTok.Value().ToLower().Equals("while"))
                     {
                         IfStatement template = CaptureIfStatement(); // Trick the program to think it's capturing an if statement
-                        WhileLoop whileLoop = new WhileLoop(template.GetCBContents(), template.GetOp1(), template.GetOp2(), template.GetComparator());
+                        WhileLoop whileLoop = new WhileLoop(template.GetCBContents(), template.GetCondition());
                         // Reuse code from the if statement because while & if follow the exact same structure:
                         // while (condition) { codeblock }
                         // if (condition) { codeblock }
@@ -168,14 +168,6 @@ namespace Parser_Module
             // e.g 'if (x > 0) {}' ==> Capture the "x > 0"
             List<Token> condition = CollectInsideBrackets("(", ")");
 
-            // We need to separate these into OPERAND1, OPERAND2, COMPARATOR to go into the 'operands' list
-            // OPERANDs can be any expression, such as 9+1*x, hence we have to collect them carefully
-            // We can split the list of tokens by the comparator, but we need to find it first
-            string comparator = CollectComparator(condition);
-            if (comparator.Equals("")) throw new SyntaxError(); // If we didn't find a comparator we have a syntax error
-
-            // We now have a comparator to split by
-            (List<Token> Operand1, List<Token> Operand2) = CaptureOperands(condition, comparator);
 
             // Next token after ')' should be '{'
             if (!GrammarTokenCheck(tokQueue.MoveNext(), "{")) throw new SyntaxError(); 
@@ -190,7 +182,7 @@ namespace Parser_Module
             // (recursion) Call parse function to parse the codeblock tokens and output a list of Step
             // This will parse codeblock nests from the deepest nest to the furthest out
 
-            return new IfStatement(codeBlockContents, Operand1, Operand2, comparator);
+            return new IfStatement(codeBlockContents, condition);
         }
 
         public ElseStatement CaptureElseStatement()
@@ -250,7 +242,7 @@ namespace Parser_Module
         }
 
 
-        public bool GrammarTokenCheck(Token tok, string toCheck)
+        public static bool GrammarTokenCheck(Token tok, string toCheck)
             // It is important to check not just the value of the grammar token, but that it is a GRAMMAR token
             // If we do not do this, a string ";" would return true as it has the value ';', but it is not actually part of the grammar in the program
             // e.g int x = ";"; would break the program if we did not check the token ";" type and realise it's a string, not grammar.
@@ -292,7 +284,7 @@ namespace Parser_Module
             return toCollect;
         }
 
-        public string CollectComparator(List<Token> condition)
+        public static string CollectComparator(List<Token> condition)
         {
             bool found = false;
             int index = 0;
@@ -313,7 +305,7 @@ namespace Parser_Module
             return toReturn;
         }
 
-        public (List<Token> Operand1, List<Token> Operand2) CaptureOperands(List<Token> condition, string comparator)
+        public static (List<Token> Operand1, List<Token> Operand2) CaptureOperands(List<Token> condition, string comparator)
             // We can't use a built-in Split List method as it won't check our Token objects are type 'grammar'
             // Split expression (below in token form) e.g:
             // Split ['2', '+', '1', '>', '1', '*', '3'] by '>'

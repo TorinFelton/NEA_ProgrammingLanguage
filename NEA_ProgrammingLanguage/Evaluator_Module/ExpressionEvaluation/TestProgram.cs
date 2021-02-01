@@ -4,6 +4,7 @@ using System;
 using Lexer_Module;
 using System.Collections.Generic;
 using System.Linq;
+using Evaluator_Module.ExpressionEvaluation.Conditions;
 
 namespace Evaluator_Module.ExpressionEvaluation
 {
@@ -15,8 +16,11 @@ namespace Evaluator_Module.ExpressionEvaluation
             List<Token> tokens = tokeniser.Tokenise().ToList();
 
 
-            TreeNode bin1 = Postfix.BuildAST(Postfix.findUnaryMinus(tokens)); // e.g "5 * 2 + 1" -> "5 2 * 1 +"
+            TreeNode bin1 = TreeBuilder.BuildAST(TreeBuilder.findUnaryMinus(tokens)); // e.g "5 * 2 + 1" -> "5 2 * 1 +"
             // Using TreeNode type, not BinOp (Binary Operator) as we cannot guarantee the root node of the abstract syntax tree will be an operator.
+
+            //TreeNode bin1 = ConditionTree.BuildAST(tokens);
+
 
             Console.WriteLine("To postfix:");
             foreach (TreeNode node in Traversal.postOrder(bin1))
@@ -36,8 +40,9 @@ namespace Evaluator_Module.ExpressionEvaluation
             Console.WriteLine();
 
             // Now using reverse polish notation, calculate what the result is. This takes in a postfix-ordered list of TreeNodes.
-            Console.WriteLine("Answer: " + RPN.Evaluate(Traversal.postOrder(bin1)));
+            Console.WriteLine("Answer: " + Algorithms.RPN.Evaluate(Traversal.postOrder(bin1)));
 
+            //Console.WriteLine(Conditions.RPN.Evaluate(Traversal.postOrder(bin1)));
         }
     }
 }
