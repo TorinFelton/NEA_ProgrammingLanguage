@@ -20,14 +20,16 @@ namespace NEA_ProgrammingLanguage
 
             bool invalid = true;
             string toRun = "";
-            while (invalid) {
+            while (invalid)
+            {
                 try
                 {
                     Console.Write("Enter a valid file name to run: ");
 
                     toRun = System.IO.File.ReadAllText(Console.ReadLine());
                     invalid = false;
-                } catch
+                }
+                catch
                 {
                     Console.WriteLine("Invalid file name.");
                 }
