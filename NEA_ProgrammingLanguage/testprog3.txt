@@ -1,0 +1,22 @@
+﻿func outputStringInt(string strOutput, int intOutput) {
+	output(strOutput);
+	outputln(intOutput);
+}
+
+func GuessingGame(string toGuess, int maxGuesses) {
+	int guessAmount = 0;
+	string guess = "";
+
+	while (guessAmount < maxGuesses && toGuess != guess) {
+		outputln("Guess the password.");
+		inputStr(guess);
+		guessAmount = guessAmount + 1;
+	}
+
+	if (toGuess == guess) { outputStringInt("You guessed it! Attempts: ", guessAmount); }
+	else {
+		outputln("You didn't guess it");
+	}
+}
+
+GuessingGame("abc123", 5);

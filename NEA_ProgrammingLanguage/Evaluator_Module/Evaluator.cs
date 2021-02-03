@@ -6,6 +6,7 @@ using Parser_Module;
 using Parser_Module.Events;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using TreeTraversal;
 
 namespace Evaluator_Module
@@ -13,6 +14,8 @@ namespace Evaluator_Module
     class Evaluator
     {
         private Dictionary<string, Token> variableScope;
+        private Dictionary<string, FuncDeclare> functions = new Dictionary<string, FuncDeclare>();
+        private static List<string> predefinedFuncNames = new List<string> { "inputstr", "inputint", "output", "outputln" };
 
         public Evaluator()
         {
@@ -21,6 +24,12 @@ namespace Evaluator_Module
             // Their value is stored as a single Token object
             // Remember from Tokeniser - Tokens can have types like 'number' or 'string' (but all are *stored* as strings)
             // To check a variable type, we check the type of its Token (e.g if its 'number' we have an integer variable)
+        }
+
+        public Evaluator(Dictionary<string, Token> variableScope, Dictionary<string, FuncDeclare> functions) // option to pre-define variables
+        {
+            this.variableScope = variableScope;
+            this.functions = functions;
         }
 
         public void Evaluate(List<Step> evaluationSteps)
@@ -107,17 +116,29 @@ namespace Evaluator_Module
                 // Call a function
                 {
                     FuncCall functionCall = (FuncCall)evalStep; // Cast as we know it is a FuncCall obj now
-                    if (!functionCall.GetName().Equals("inputstr") && !functionCall.GetName().Equals("inputint")) // If NOT calling 'input' function
+                    if (predefinedFuncNames.Contains(functionCall.GetName()))
                     {
-                        CallFunction(functionCall.GetName(), ResolveExpression(functionCall.GetArguments()));
-                        // Call function with name and *resolved* list of arguments
-                        // Resolve function always outputs a single token which is the result of an expression (list of tokens) being evaluated 
-                    } else
+                        if (!functionCall.GetName().Equals("inputstr") && !functionCall.GetName().Equals("inputint")) // If NOT calling 'input' function
+                        {
+                            CallInBuiltFunction(functionCall.GetName(), ResolveExpression(functionCall.GetArguments()));
+                            // Call function with name and *resolved* list of arguments
+                            // Resolve function always outputs a single token which is the result of an expression (list of tokens) being evaluated 
+                        } else
                         // SPECIAL CASE: Calling inputStr or inputInt functions indicates that the 'argument' is NOT an expression to be resolved, but rather a variable name to store input value in.
                         // This means functionCall.Argumnets() will only have 1 token:
+                        {
+                            CallInBuiltFunction(functionCall.GetName(), functionCall.GetArguments()[0]); // Pass in first value in Arguments as there only should be one - the variable to be input to
+                        }
+                    } else
                     {
-                        CallFunction(functionCall.GetName(), functionCall.GetArguments()[0]); // Pass in first value in Arguments as there only should be one - the variable to be input to
+                        CallFunction(functionCall.GetName(), functionCall.GetArguments());
                     }
+                }
+                else if (evalStep.Type().Equals("FUNC_DECLARE"))
+                {
+                    FuncDeclare funcDec = (FuncDeclare)evalStep; // We know it is a FuncDeclare now
+
+                    functions.Add(funcDec.GetName(), funcDec); // add to list of defined functions, no more action needed for now.
                 }
                 else throw new SyntaxError(); // Unrecognised Step, crash program.
             }
@@ -352,8 +373,8 @@ namespace Evaluator_Module
         // simplified: return tok1.Type == tok2.Type && tok1.Value == tok2.Value
         // Using .Equals instead of == to avoid wrong definition of 'equal', .Equals is for literal equality in value
 
-        public void CallFunction(string funcName, Token argument)
-            // As this is a simple language, functions can only take one argument.
+        public void CallInBuiltFunction(string funcName, Token argument)
+            // built in functions. todo: better dynamic handling instead of hard code
         {
             funcName = funcName.ToLower(); // We do not need to be case sensitive for our language.
             if (funcName.Equals("output")) Console.Write(argument.Value()); // Write to console with no new line
@@ -402,6 +423,34 @@ namespace Evaluator_Module
                 // Once we know that, we can store it as a 'number' token with string value and convert it without errors later
             }
             else throw new ReferenceError(); // No function name recognised, throw error.
+        }
+
+        public void CallFunction(string funcName, List<Token> arguments)
+        {
+            // check function exists
+            if (!functions.ContainsKey(funcName)) throw new ReferenceError();
+
+            FuncDeclare funcToRun = functions[funcName];
+
+            Dictionary<string, Token> funcVariableScope = new Dictionary<string, Token>();
+
+            int index = 0;
+            // separate arguments
+            foreach (List<Token> argument in Token.TokenSplit(",", arguments))
+            {
+                Token resolvedArgumentExpr = ResolveExpression(argument);
+                // Check it matches type with parameter defined in funcdeclare
+                // If type of this argument (expr) does not match that of the current parameter we are trying to pass in
+                if (!resolvedArgumentExpr.Type().Equals(funcToRun.GetParameters().Values.ElementAt(index))) throw new TypeMatchError();
+
+                funcVariableScope.Add(funcToRun.GetParameters().Keys.ElementAt(index), resolvedArgumentExpr);
+                // Now add the result of the expression as a variable in the local scope of the function we will run
+
+                index++;
+            }
+
+            Evaluator eval = new Evaluator(funcVariableScope, functions);
+            eval.Evaluate(funcToRun.GetcbContents());
         }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using Lexer_Module;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace Parser_Module
@@ -42,7 +43,8 @@ namespace Parser_Module
               + String.Join("", operand2String) + ")\n CONTENTS: \n" + codeBlockString;
             // Display condition operands AND each Step in codeblock
             */
-            return ""; // TODO
+            return "IF_CONDITION: (" + String.Join("", condition.Select(x => x.Value())) + ") CONTENTS:\n" 
+                + String.Join("\n ", codeBlockContents.Select(x => x.ToString())); // TODO
         }
         
     }

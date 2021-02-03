@@ -1,4 +1,12 @@
-﻿if (((true && (false || !false)))) { outputln("IT WORKS!"); }
+﻿func testingFunc(string x, int y, bool z) {
+	outputln(x);
+	outputln(y);
+	outputln(z);
+}
+
+testingFunc("Hello" + " World!", 20*(20/-1), !true);
+
+if (((true && (false || !false)))) { outputln("IT WORKS!"); }
 
 bool hello = true;
 outputln(hello);

@@ -1,4 +1,6 @@
-﻿namespace Lexer_Module
+﻿using System.Collections.Generic;
+
+namespace Lexer_Module
 {
     class Token
     {
@@ -25,6 +27,21 @@
         public string Value()
         {
             return value;
+        }
+
+        public static IEnumerable<List<Token>> TokenSplit(string toSplitBy, List<Token> toSplit)
+        {
+            List<Token> cache = new List<Token>();
+            foreach (Token tok in toSplit)
+            {
+                if (tok.Type().Equals("grammar") && tok.Value().Equals(toSplitBy))
+                {
+                    yield return cache;
+                    cache = new List<Token>(); // reset cache
+                }
+                else cache.Add(tok);
+            }
+            yield return cache; // return last (or only) section
         }
     }
 }

@@ -41,7 +41,7 @@ namespace Lexer_Module
                 else if ("+-*/^".Contains(character)) yield return new Token("operator", character.ToString());
 
                 // General Guideline Grammar
-                else if ("(){};=<>!|&".Contains(character))
+                else if ("(){};=<>!|&,".Contains(character))
                 {
                     // Check if more tokens past it then check if we've found a comparator operator like "==", ">=", "<="
                     if (contents.More() && "=<>&|".Contains(contents.Next()))

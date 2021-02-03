@@ -1,6 +1,7 @@
 ﻿using DataStructures;
 using Lexer_Module;
 using Parser_Module.Events;
+using Evaluator_Module;
 using System;
 using System.Collections.Generic;
 using Errors;
@@ -78,6 +79,16 @@ namespace Parser_Module
                         EvaluationSteps.Add(whileLoop);
                     }
 
+                    else if (nextTok.Value().ToLower().Equals("func"))
+                    {
+                        FuncDeclare funcDec = CaptureFunctionDeclare();
+                        /*
+                         * EXPECTED PATTERN: func funcName(params) {
+                         *  <codeblock>
+                         * }
+                         */
+                        EvaluationSteps.Add(funcDec);
+                    }
 
                     else if (GrammarTokenCheck(tokQueue.Next(), "("))
                       // This condition will also return true if it finds an if/while statement, so it is AFTER the check for those.
@@ -215,11 +226,58 @@ namespace Parser_Module
             // e.g output(x + 2); -> capture the "x+2"
             List<Token> arguments = CollectInsideBrackets("(", ")");
 
+
             // After collection has ended we should be at token ')' in example 'output("testing");'
             //                                                        We need to skip this token ^
             tokQueue.MoveNext(); // Skip the ";"
 
             return new FuncCall(funcName, arguments);
+        }
+
+        public FuncDeclare CaptureFunctionDeclare()
+        {
+            Token funcName = tokQueue.MoveNext();
+
+            if (!funcName.Type().Equals("identifier")) throw new SyntaxError(); // function declare with no funcname => syntax error
+
+            // We are at the '(' in "func testFunc(params) { }"
+            if (!GrammarTokenCheck(tokQueue.MoveNext(), "(")) throw new SyntaxError(); // if next Token isn't ( then throw error
+
+            List<Token> parameterTokens = CollectInsideBrackets("(", ")");
+            Dictionary<string, string> parameters = new Dictionary<string, string>();
+
+            foreach (List<Token> paramTok in Token.TokenSplit(",", parameterTokens))
+                // Each paramTok should be something like 
+                // [
+                //  ('identifier', 'string'), 
+                //  ('identifier', 'x')
+                // ]
+                // This is from: 'func testFunc(string x)'
+            {
+                if (paramTok.Count != 2) throw new SyntaxError(); // too many or too few tokens
+
+                if (paramTok[0].Type().Equals("identifier") && paramTok[1].Type().Equals("identifier")) // e.g 'string x' => IDENTIFIER IDENTIFIER
+                {
+                    if (Syntax.IsType(paramTok[0].Value()))
+                    {
+                        parameters.Add(paramTok[1].Value(), paramTok[0].Value().Replace("int", "number")); // (varname, type)
+                    }
+                    else throw new SyntaxError(); // parameter type undefined
+                }
+                else throw new SyntaxError(); // should be defining parameters, not any other type of token allowed other than identifiers
+            }
+
+            // next token should be {
+            if (!GrammarTokenCheck(tokQueue.MoveNext(), "{")) throw new SyntaxError();
+
+            // Next token(s) should all be programming statements inside the code block { }
+            // We need to collect these so we can parse them
+            List<Token> codeBlockTokens = CollectInsideBrackets("{", "}");
+
+            Parser parseTokens = new Parser(codeBlockTokens); // Create new parser object with only codeblock tokens
+            List<Step> codeBlockContents = parseTokens.ParseTokens(); // (recursion) Call parse function to parse the codeblock tokens and output a list of Step
+
+            return new FuncDeclare(funcName.Value(), parameters, codeBlockContents);
         }
 
         public VarChange CaptureVarChange(string varName)

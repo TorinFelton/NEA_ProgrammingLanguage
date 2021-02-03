@@ -37,6 +37,7 @@ namespace Evaluator_Module.ExpressionEvaluation.Algorithms
         {
             Stack<BinOp> operatorStack = new Stack<BinOp>();
             Stack<TreeNode> numStack = new Stack<TreeNode>();
+            infix = findUnaryMinus(infix);
 
             foreach (Token token in infix)
             {
