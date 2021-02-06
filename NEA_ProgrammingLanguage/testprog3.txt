@@ -17,6 +17,22 @@ func GuessingGame(string toGuess, int maxGuesses) {
 	else {
 		outputln("You didn't guess it");
 	}
+
 }
 
 GuessingGame("abc123", 5);
+
+func Count(int n) {
+	if (n <= 0) {
+		outputln("Must be a positive int");
+	}
+	if (n > 1) {
+		outputln("Completed counting");
+	}
+
+	else { 
+		Count(n+1);
+	}
+}
+
+Count(0);

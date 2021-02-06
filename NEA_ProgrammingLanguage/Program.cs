@@ -16,39 +16,71 @@ namespace NEA_ProgrammingLanguage
             //Lexer_Module.TestProgram.Run();
             //Evaluator_Module.ExpressionEvaluation.TestProgram.Run();
 
-
-            bool invalid = true;
-            string toRun = "";
-            while (invalid)
+            if (args.Length > 0 && args[0].Equals("-shell"))
             {
-                try
+                Shell cmdShell = new Shell();
+                while (true)
                 {
-                    Console.Write("Enter a valid file name to run: ");
+                    cmdShell.OutputColour(">> ", ConsoleColor.Green);
 
-                    toRun = System.IO.File.ReadAllText(Console.ReadLine());
-                    invalid = false;
-                }
-                catch
-                {
-                    Console.WriteLine("Invalid file name.");
+                    string input = Console.ReadLine();
+                    if (input.Equals("exit")) { Environment.Exit(0); }
+                    if (input.EndsWith("{")) 
+                    {
+                        int balance = 1;
+                        string total = input;
+                        int lineNumber = 2;
+
+                        while (balance != 0)
+                        {
+                            cmdShell.OutputColour(lineNumber++.ToString(), ConsoleColor.Green);
+                            total += Console.ReadLine();
+                            if (total.EndsWith("{")) balance++;
+                            else if (total.EndsWith("}")) balance--;
+                        }
+
+                        cmdShell.Run(total);
+                    } else
+                    {
+                        cmdShell.Run(input);
+                    }
                 }
             }
+            else
+            {
+                bool invalid = true;
+                string toRun = "";
+                while (invalid)
+                {
+                    try
+                    {
+                        Console.Write("Enter a valid file name to run: ");
 
-            Console.WriteLine("-------------------- PROGRAM STARTED --------------------");
-            Tokeniser tokeniser = new Tokeniser(toRun);
-            List<Token> tokens = tokeniser.Tokenise().ToList();
+                        toRun = System.IO.File.ReadAllText(Console.ReadLine());
+                        invalid = false;
+                    }
+                    catch
+                    {
+                        Console.WriteLine("Invalid file name.");
+                    }
+                }
+
+                Console.WriteLine("-------------------- PROGRAM STARTED --------------------");
+                Tokeniser tokeniser = new Tokeniser(toRun);
+                List<Token> tokens = tokeniser.Tokenise().ToList();
 
 
-            //Console.WriteLine(String.Join("\n", tokens));
+                //Console.WriteLine(String.Join("\n", tokens));
 
 
-            Parser parseTok = new Parser(tokens);
-            List<Step> evalSteps = parseTok.ParseTokens();
+                Parser parseTok = new Parser(tokens);
+                List<Step> evalSteps = parseTok.ParseTokens();
 
-            Evaluator eval = new Evaluator();
-            eval.Evaluate(evalSteps);
-            Console.WriteLine("-------------------- PROGRAM ENDED --------------------");
-
+                Evaluator eval = new Evaluator();
+                eval.Evaluate(evalSteps);
+                Console.WriteLine("-------------------- PROGRAM ENDED --------------------");
+            }
         }
+
     }
 }
