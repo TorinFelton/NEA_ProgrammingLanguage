@@ -1,22 +1,13 @@
-# 'Creating an Interpreter' (NEA)
+# 'Creating an Interpreter' (Ex[erimental)
 Repo for my AQA A-Level Computer Science Non-Exam Assessment (coursework).
 
 - Uses the implementation of the [ExpressionEvaluator](https://github.com/TorinFelton/ExpressionEvaluator) repository for evaluating mathematical expressions.
 - Experimental for extra features, e.g Else statements, While, etc. these will not be added to the Master branch. 
 
-(NEA) Targets:
-- [x] Implement Lexer
-- [x] Implement Parser
-- [x] Implement Evaluator
-- [x] Error handling outside of C# default exceptions
-- [x] File input
-
-# Recent Updates
-
 ### Experimental Version
 This is the version that I have continued to develop beyond the NEA coursework requirements. 
 - [Master Branch](https://github.com/TorinFelton/NEA_ProgrammingLanguage/tree/master): NEA version, basic limited functionality
-- [Experimental Branch](https://github.com/TorinFelton/NEA_ProgrammingLanguage/tree/experimental): More complex and functional version
+- [(Current) Experimental Branch](https://github.com/TorinFelton/NEA_ProgrammingLanguage/tree/experimental): More complex and functional version
 
 The experimental branch will continue to be supported, the master will only get occasional updates if something is urgent, but no additional features. These are some of the experimental targets, most of which have been met:
 
