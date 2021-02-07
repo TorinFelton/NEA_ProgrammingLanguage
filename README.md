@@ -11,6 +11,14 @@ Repo for my AQA A-Level Computer Science Non-Exam Assessment (coursework).
 - [x] Error handling outside of C# default exceptions
 - [x] File input
 
+# Recent Updates
+
+## Experimental Version
+This is the version that I have continued to develop beyond the NEA coursework requirements. 
+- [Master Branch](https://github.com/TorinFelton/NEA_ProgrammingLanguage/tree/master): NEA version, basic limited functionality
+- [Experimental Branch](https://github.com/TorinFelton/NEA_ProgrammingLanguage/tree/experimental): More complex and functional version
+
+The experimental branch will continue to be supported, the master will only get occasional updates if something is urgent, but no additional features. These are some of the experimental targets, most of which have been met:
 
 (Experimental) Targets:
 - [x] Else statements
