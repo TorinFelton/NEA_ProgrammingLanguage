@@ -16,15 +16,6 @@ See the [experimental branch](https://github.com/TorinFelton/NEA_ProgrammingLang
 - [x] File input
 
 
-(Experimental) Targets:
-- [x] Else statements
-- [ ] Else if statements
-- [x] While statements
-- [x] More advanced condition parsing (currently only supports 1 comparison)
-  - [x] Boolean variable type
-  
-The experimental targets are a lot less likely to be implemented and have not been designed prior like the NEA ones.
-
 # Showcase Program
 <details>
 <summary>Example Program Source Code</summary>
