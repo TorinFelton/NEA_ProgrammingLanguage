@@ -13,7 +13,7 @@ Repo for my AQA A-Level Computer Science Non-Exam Assessment (coursework).
 
 # Recent Updates
 
-## Experimental Version
+### Experimental Version
 This is the version that I have continued to develop beyond the NEA coursework requirements. 
 - [Master Branch](https://github.com/TorinFelton/NEA_ProgrammingLanguage/tree/master): NEA version, basic limited functionality
 - [Experimental Branch](https://github.com/TorinFelton/NEA_ProgrammingLanguage/tree/experimental): More complex and functional version
