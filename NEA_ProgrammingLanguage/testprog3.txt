@@ -1,4 +1,12 @@
-﻿func Count(int start, int finish) {
+﻿func testing() {
+	outputln(true);
+}
+
+testing();
+
+
+
+func Count(int start, int finish) {
 	outputln(start);
 
 	if (start < finish) {
@@ -9,7 +17,7 @@
 	}
 }
 
-Count(0);
+Count(0, 10);
 
 
 func outputStringInt(string strOutput, int intOutput) {

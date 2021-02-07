@@ -32,7 +32,7 @@ namespace Errors
     {
         public ReferenceError() : base()
         {
-            Error.ShowError("REFERENCE error. Variable or function referenced does not exist.");
+            Error.ShowError("REFERENCE error. Variable, function or type referenced does not exist.");
         }
     }
 

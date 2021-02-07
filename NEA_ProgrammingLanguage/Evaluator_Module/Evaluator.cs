@@ -1,3 +1,4 @@
+using DataStructures;
 using Errors;
 using Evaluator_Module.ExpressionEvaluation.Algorithms;
 using Evaluator_Module.ExpressionEvaluation.Conditions;
@@ -131,7 +132,7 @@ namespace Evaluator_Module
                         }
                     } else
                     {
-                        CallFunction(functionCall.GetName(), functionCall.GetArguments());
+                        CallFunction(functionCall.GetName(), functionCall.GetArguments(), false);
                     }
                 }
                 else if (evalStep.Type().Equals("FUNC_DECLARE"))
@@ -139,6 +140,18 @@ namespace Evaluator_Module
                     FuncDeclare funcDec = (FuncDeclare)evalStep; // We know it is a FuncDeclare now
 
                     functions.Add(funcDec.GetName(), funcDec); // add to list of defined functions, no more action needed for now.
+                }
+                else if (evalStep.Type().Equals("RETURN_VALUE"))
+                {
+                    // Returning a value
+                    ReturnValue retVal = (ReturnValue)evalStep;
+
+                    Token toReturn = ResolveExpression(retVal.GetReturnedValue()); // Resolve expression to return
+
+                    variableScope.Add("_RETURN", toReturn); // Add variable named '_RETURN' to be referenced later in parent expression that calls this function.
+
+                    index = evaluationSteps.Count; // Stop any code running past this point, this turns the for loop bool to false.
+
                 }
                 else throw new SyntaxError(); // Unrecognised Step, crash program.
             }
@@ -267,13 +280,28 @@ namespace Evaluator_Module
             // Replace each variable in an expression with the value it references
 
             List<Token> newExpr = new List<Token>();
+            TokenQueue tokQ = new TokenQueue(expr);
             Token toAdd;
-            foreach (Token tok in expr)
+
+
+            while (tokQ.More())
             {
+                Token tok = tokQ.MoveNext();
+                
+
                 if (tok.Type().Equals("identifier"))
-                // Must be variable reference
+                // Must be variable reference OR function call
                 {
-                    if (variableScope.ContainsKey(tok.Value()))
+                    if (tokQ.More() && Parser.GrammarTokenCheck(tokQ.Next(), "("))
+                        // Must be a function call if '(' found. Now we assume that tok.Value() is the function name
+                    {
+                        tokQ.MoveNext(); // Skip the '('
+
+                        List<Token> args = Parser.CollectInsideBrackets("(", ")", ref tokQ); // collec arguments
+
+                        toAdd = CallFunction(tok.Value(), args, true); // Add result of function call
+                    }
+                    else if (variableScope.ContainsKey(tok.Value()))
                     // If that variable exists
                     {
                         toAdd = variableScope[tok.Value()];
@@ -425,7 +453,7 @@ namespace Evaluator_Module
             else throw new ReferenceError(); // No function name recognised, throw error.
         }
 
-        public void CallFunction(string funcName, List<Token> arguments)
+        public Token CallFunction(string funcName, List<Token> arguments, bool inExpr)
         {
             // check function exists
             if (!functions.ContainsKey(funcName)) throw new ReferenceError();
@@ -435,26 +463,42 @@ namespace Evaluator_Module
             Dictionary<string, Token> funcVariableScope = new Dictionary<string, Token>();
 
             int index = 0;
-            List<List<Token>> splitArgs = Token.TokenSplit(",", arguments).ToList();
-
-            if (splitArgs.Count != funcToRun.GetParameters().Count) throw new ArgumentRangeException();
-
-            // separate arguments
-            foreach (List<Token> argument in splitArgs)
+            if (arguments.Count > 0)
             {
-                Token resolvedArgumentExpr = ResolveExpression(argument);
-                // Check it matches type with parameter defined in funcdeclare
-                // If type of this argument (expr) does not match that of the current parameter we are trying to pass in
-                if (!resolvedArgumentExpr.Type().Equals(funcToRun.GetParameters().Values.ElementAt(index))) throw new TypeMatchError();
+                List<List<Token>> splitArgs = Token.TokenSplit(",", arguments).ToList();
 
-                funcVariableScope.Add(funcToRun.GetParameters().Keys.ElementAt(index), resolvedArgumentExpr);
-                // Now add the result of the expression as a variable in the local scope of the function we will run
+                if (splitArgs.Count != funcToRun.GetParameters().Count) throw new ArgumentRangeException();
 
-                index++;
+                // separate arguments
+                foreach (List<Token> argument in splitArgs)
+                {
+                    Token resolvedArgumentExpr = ResolveExpression(argument);
+                    // Check it matches type with parameter defined in funcdeclare
+                    // If type of this argument (expr) does not match that of the current parameter we are trying to pass in
+                    if (!resolvedArgumentExpr.Type().Equals(funcToRun.GetParameters().Values.ElementAt(index))) throw new TypeMatchError();
+
+                    funcVariableScope.Add(funcToRun.GetParameters().Keys.ElementAt(index), resolvedArgumentExpr);
+                    // Now add the result of the expression as a variable in the local scope of the function we will run
+
+                    index++;
+                }
             }
 
             Evaluator eval = new Evaluator(funcVariableScope, functions);
             eval.Evaluate(funcToRun.GetcbContents().ToList());
+
+            if (inExpr)
+            {
+                Token returnedValue = eval.variableScope["_RETURN"];
+                // Value that function returns will be stored as variable named '_RETURN'
+                // Variable declarations cannot have '_' at the start, so no possible overwrite of the return value
+
+                return new Token(
+                    returnedValue.Type(),
+                    returnedValue.Value()
+                );
+            }
+            else return new Token("", "");
         }
     }
 }

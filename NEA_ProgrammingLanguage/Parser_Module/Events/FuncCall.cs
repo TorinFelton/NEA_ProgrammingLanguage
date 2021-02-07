@@ -32,4 +32,25 @@ namespace Parser_Module.Events
             // Return function name and argument (in form of expression represented by Tokens)
         }
     }
+
+    class ReturnValue : Event
+    {
+        private List<Token> toReturn;
+
+        public ReturnValue(List<Token> toReturn)
+        {
+            this.type = "RETURN_VALUE";
+            this.toReturn = toReturn;
+        }
+
+        public List<Token> GetReturnedValue() { return toReturn; }
+
+
+        public override string ToString()
+        {
+            string toOutput = "";
+            foreach (Token tok in toReturn) toOutput += tok.Value();
+            return "RETURN_VALUE: " + toOutput;
+        }
+    }
 }

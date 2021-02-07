@@ -13,6 +13,7 @@ namespace Parser_Module.Events
         private Dictionary<string, string> parameterScope; // name, type
         private List<Step> cbContents;
         // Arguments could be an expression or a single element referencing a variable name.
+        private string ReturnType;
 
         public FuncDeclare(string funcName, Dictionary<string, string> parameters, List<Step> cbContents)
         {
@@ -22,11 +23,22 @@ namespace Parser_Module.Events
             this.cbContents = cbContents;
         }
 
+        public FuncDeclare(string funcName, Dictionary<string, string> parameters, List<Step> cbContents, string ReturnType)
+        {
+            this.type = "FUNC_DECLARE";
+            this.funcName = funcName.ToLower();
+            this.parameterScope = parameters;
+            this.cbContents = cbContents;
+            this.ReturnType = ReturnType;
+        }
+
         public string GetName() { return funcName; }
 
         public Dictionary<string, string> GetParameters() { return parameterScope; }
 
         public List<Step> GetcbContents() { return cbContents; }
+
+        public string GetReturnType() { return ReturnType; }
 
         public override string ToString()
         {

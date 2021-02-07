@@ -4,7 +4,6 @@ using Evaluator_Module;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-Added using System.Threading;
 
 namespace NEA_ProgrammingLanguage
 {
@@ -25,7 +24,7 @@ namespace NEA_ProgrammingLanguage
 
                     string input = Console.ReadLine();
                     if (input.Equals("exit")) { Environment.Exit(0); }
-                    if (input.EndsWith("{")) 
+                    if (input.Replace(" ", "").EndsWith("{"))   // replace " " => "" just for comparison in case a space is added after the {
                     {
                         int balance = 1;
                         string total = input;
@@ -35,8 +34,8 @@ namespace NEA_ProgrammingLanguage
                         {
                             cmdShell.OutputColour(lineNumber++ + "  ", ConsoleColor.Green);
                             total += Console.ReadLine();
-                            if (total.EndsWith("{")) balance++;
-                            else if (total.EndsWith("}")) balance--;
+                            if (total.Replace(" ", "").EndsWith("{")) balance++;
+                            else if (total.Replace(" ", "").EndsWith("}")) balance--;
                         }
 
                         cmdShell.Run(total);

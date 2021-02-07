@@ -5,6 +5,7 @@ using Evaluator_Module;
 using System;
 using System.Collections.Generic;
 using Errors;
+using System.Linq;
 
 namespace Parser_Module
 {
@@ -86,8 +87,30 @@ namespace Parser_Module
                          * EXPECTED PATTERN: func funcName(params) {
                          *  <codeblock>
                          * }
+                         * 
+                         * OR
+                         * 
+                         * func funcName(params) returns returnType {
+                         *      <codeblock>
+                         * }
                          */
                         EvaluationSteps.Add(funcDec);
+                    }
+
+                    else if (nextTok.Value().ToLower().Equals("return"))
+                    {
+                        // e.g 'return x + 2;'
+                        // Expect expr to proceed then a ';'
+                        List<Token> expr = new List<Token>();
+
+                        while (tokQueue.More() && !GrammarTokenCheck(tokQueue.Next(), ";")) // while there are more tokens in expression. Loops UP TO (not inclusive) the ';' token
+                        {
+                            expr.Add(tokQueue.MoveNext());
+                        }
+
+                        if (!GrammarTokenCheck(tokQueue.MoveNext(), ";")) throw new SyntaxError(); // did not end with a ';', cause error
+
+                        EvaluationSteps.Add(new ReturnValue(expr));
                     }
 
                     else if (GrammarTokenCheck(tokQueue.Next(), "("))
@@ -178,7 +201,7 @@ namespace Parser_Module
             // Next token(s) should be operands to form a 'condition'
             // These token(s) will be inside ( )
             // e.g 'if (x > 0) {}' ==> Capture the "x > 0"
-            List<Token> condition = CollectInsideBrackets("(", ")");
+            List<Token> condition = CollectInsideBrackets("(", ")", ref tokQueue);
 
 
             // Next token after ')' should be '{'
@@ -187,7 +210,7 @@ namespace Parser_Module
 
             // Next token(s) should be all be EVERYTHING inside the code block { }
             // Once again, we need to collect these so we can parse them
-            List<Token> codeBlockTokens = CollectInsideBrackets("{", "}");
+            List<Token> codeBlockTokens = CollectInsideBrackets("{", "}", ref tokQueue);
 
             Parser parseTokens = new Parser(codeBlockTokens); // Create new parser object with only codeblock tokens
             codeBlockContents = parseTokens.ParseTokens(); 
@@ -213,7 +236,7 @@ namespace Parser_Module
 
             // Next token(s) should all be programming statements inside the code block { }
             // We need to collect these so we can parse them
-            List<Token> codeBlockTokens = CollectInsideBrackets("{", "}");
+            List<Token> codeBlockTokens = CollectInsideBrackets("{", "}", ref tokQueue);
 
             Parser parseTokens = new Parser(codeBlockTokens); // Create new parser object with only codeblock tokens
             codeBlockContents = parseTokens.ParseTokens(); // (recursion) Call parse function to parse the codeblock tokens and output a list of Step
@@ -225,7 +248,7 @@ namespace Parser_Module
         {
             // This is a simple capture - we just need to get all tokens inside the ( )
             // e.g output(x + 2); -> capture the "x+2"
-            List<Token> arguments = CollectInsideBrackets("(", ")");
+            List<Token> arguments = CollectInsideBrackets("(", ")", ref tokQueue);
 
 
             // After collection has ended we should be at token ')' in example 'output("testing");'
@@ -245,41 +268,64 @@ namespace Parser_Module
             // We are at the '(' in "func testFunc(params) { }"
             if (!GrammarTokenCheck(tokQueue.MoveNext(), "(")) throw new SyntaxError(); // if next Token isn't ( then throw error
 
-            List<Token> parameterTokens = CollectInsideBrackets("(", ")");
-            Dictionary<string, string> parameters = new Dictionary<string, string>();
 
-            foreach (List<Token> paramTok in Token.TokenSplit(",", parameterTokens))
+            // -------------- PARSE DEFINED PARAMETERS --------------------
+            List<Token> parameterTokens = CollectInsideBrackets("(", ")", ref tokQueue);
+            Dictionary<string, string> parameters = new Dictionary<string, string>();
+            if (parameterTokens.Count > 0)
+            {
+                foreach (List<Token> paramTok in Token.TokenSplit(",", parameterTokens))
                 // Each paramTok should be something like 
                 // [
                 //  ('identifier', 'string'), 
                 //  ('identifier', 'x')
                 // ]
                 // This is from: 'func testFunc(string x)'
-            {
-                if (paramTok.Count != 2) throw new SyntaxError(); // too many or too few tokens
-
-                if (paramTok[0].Type().Equals("identifier") && paramTok[1].Type().Equals("identifier")) // e.g 'string x' => IDENTIFIER IDENTIFIER
                 {
-                    if (Syntax.IsType(paramTok[0].Value()))
+                    if (paramTok.Count != 2) throw new SyntaxError(); // too many or too few tokens
+
+                    if (paramTok[0].Type().Equals("identifier") && paramTok[1].Type().Equals("identifier")) // e.g 'string x' => IDENTIFIER IDENTIFIER
                     {
-                        parameters.Add(paramTok[1].Value(), paramTok[0].Value().Replace("int", "number")); // (varname, type)
+                        if (Syntax.IsType(paramTok[0].Value()))
+                        {
+                            parameters.Add(paramTok[1].Value(), paramTok[0].Value().Replace("int", "number")); // (varname, type)
+                        }
+                        else throw new SyntaxError(); // parameter type undefined
                     }
-                    else throw new SyntaxError(); // parameter type undefined
+                    else throw new SyntaxError(); // should be defining parameters, not any other type of token allowed other than identifiers
                 }
-                else throw new SyntaxError(); // should be defining parameters, not any other type of token allowed other than identifiers
+            }
+
+            Token nextTok = tokQueue.MoveNext();
+            string returnType = "";
+
+            if (nextTok.Type().Equals("identifier") && nextTok.Value().ToLower().Equals("returns"))
+                // We now know it returns a value
+                // PATTERN EXPECTED: 'returns <type>'
+            {
+                nextTok = tokQueue.MoveNext(); // Should now be the <type>
+
+                if (Syntax.IsType(nextTok.Value())) 
+                {
+                    returnType = nextTok.Value();
+
+                    nextTok = tokQueue.MoveNext(); // should move onto the { now
+                }
+                else throw new ReferenceError();
             }
 
             // next token should be {
-            if (!GrammarTokenCheck(tokQueue.MoveNext(), "{")) throw new SyntaxError();
+            if (!GrammarTokenCheck(nextTok, "{")) throw new SyntaxError();
 
             // Next token(s) should all be programming statements inside the code block { }
             // We need to collect these so we can parse them
-            List<Token> codeBlockTokens = CollectInsideBrackets("{", "}");
+            List<Token> codeBlockTokens = CollectInsideBrackets("{", "}", ref tokQueue);
 
             Parser parseTokens = new Parser(codeBlockTokens); // Create new parser object with only codeblock tokens
             List<Step> codeBlockContents = parseTokens.ParseTokens(); // (recursion) Call parse function to parse the codeblock tokens and output a list of Step
 
-            return new FuncDeclare(funcName.Value(), parameters, codeBlockContents);
+
+            return new FuncDeclare(funcName.Value(), parameters, codeBlockContents, returnType);
         }
 
         public VarChange CaptureVarChange(string varName)
@@ -311,7 +357,7 @@ namespace Parser_Module
             return tok.Type().Equals("grammar") && tok.Value().Equals(toCheck);
         }
 
-        public List<Token> CollectInsideBrackets(string openBracket, string closeBracket)
+        public static List<Token> CollectInsideBrackets(string openBracket, string closeBracket, ref TokenQueue tokQueue)
           // open & close bracket can technically be anything, but it is generally used for '()' and '{}'
           // This method allows us to collect everything inside these brackets and can handle nested brackets by balancing them
           // e.g 'output(1 + (2*(1+2)));' has nested () brackets inside
@@ -321,7 +367,7 @@ namespace Parser_Module
             bool keepCollectingTokens = true;
             List<Token> toCollect = new List<Token>();
 
-            while (keepCollectingTokens)
+            while (keepCollectingTokens && tokQueue.More())
             {
                 Token collectedTok = tokQueue.MoveNext(); // Pop next Token out queue
 
@@ -341,6 +387,8 @@ namespace Parser_Module
                     // If NOT, we have finished collecting then collectedTok is a closing bracket - we do not want this added.
 
             }
+            if (keepCollectingTokens) throw new SyntaxError(); // Loop must've stopped due to tokQueue.More() returning false (no more tokens left) therefore syntax error
+            // e.g caused by 'testingFunc(02902 + 1092' with no balanced ')' on the end.
 
             return toCollect;
         }

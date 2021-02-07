@@ -32,6 +32,7 @@ namespace Lexer_Module
         public static IEnumerable<List<Token>> TokenSplit(string toSplitBy, List<Token> toSplit)
         {
             List<Token> cache = new List<Token>();
+
             foreach (Token tok in toSplit)
             {
                 if (tok.Type().Equals("grammar") && tok.Value().Equals(toSplitBy))
