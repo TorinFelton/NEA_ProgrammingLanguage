@@ -22,59 +22,139 @@ The experimental branch will continue to be supported, the master will only get 
   
 The experimental targets are a lot less likely to be implemented and have not been designed prior like the NEA ones.
 
-# Showcase Program
+# Addition Notes
+
 <details>
-<summary>Example Program Source Code</summary>
-This is the 'input' to the interpreter: 
+<summary>Shell Usage</summary>
+I've implemented an interactive shell, similar to that of Python. You are able to type normal programming statements and flow control in, but you are also (like Python) able to just type an expression in and have it evaluated.
+The shell has text colouring too, here is what it looks like on the Windows Terminal Preview: https://imgur.com/a/DC17xAZ
+
+NOTE: '>>' signifies input to the shell, and '>' signifies input to the program.
+
+<details>
+  <summary>Statements</summary>
   
-```c++
+```c#
 
-int x = 10*(4+90);
-int y = 10 * 4+90;
-string helloWrld = "";
+>> int x = 0;
+>> outputln(x);
+0
 
-if (x == 940) {
-	output("X is: ");
-	outputln(x);
-
-	if (y == 130) {
-		output("Y is: ");
-		outputln(y);
-
-		outputln("Order of operations works!");
-	}
-}
-
-outputln("Give a new value for X: ");
-inputInt(x);
-if (x > 0) { outputln("X is greater than 0!"); }
-
-outputln("Give a string value: ");
-inputStr(helloWrld);
-outputln("Your value: '" + helloWrld + "'");
-
-
-```
-
-  <summary>Running Example Program</summary>
-'>' in the console indicates an input prompt.
-  
-```
--------------------- PROGRAM STARTED --------------------
-X is: 940
-Y is: 130
-Order of operations works!
-Give a new value for X:
-> 100
-X is greater than 0!
-Give a string value:
-> Hello World
-Your value: 'Hello World'
--------------------- PROGRAM ENDED --------------------
 ```
 </details>
 
-# Addition Notes
+
+<details>
+  <summary>Flow Control (if, while) & Auto Line Numbering</summary>
+	Line numbers will continue until the code block is finished. Colouring is different in the shell.
+  
+```c#
+
+>> if (x == 0) {
+2       outputln("X is 0");
+3       inputInt(x);
+4       if (x == 0) {
+5               outputln("Unchanged");
+6       }
+7  }
+X is 0
+> 0
+Unchanged
+
+```
+
+  
+</details>
+
+<details>
+  <summary>Boolean Variable Declaration & Usage</summary>
+	
+  
+```c#
+
+>> bool testing = true && false;
+>> testing
+False
+>> if (testing) {
+2       outputln("Testing is true");
+3  } else {
+4       outputln("Testing is false");
+5  }
+6
+Testing is false
+>>
+
+```
+
+  
+</details>
+</details>
+
+  </details>
+
+<details>
+<summary>Booleans & Logical Expressions</summary>
+The master branch contains no booleans and logical expressions are not evaluated as such - it only supports two comparisons between variables. This version is able to evaluate a complex logical expression and now accepts 'True' and 'False' as values, meaning boolean variables are now here too. To do this, I've just re-implemented the same algorithm that calculates maths expressions, and replaced the 'operators' with logical comparators. The '!' acts as an unary minus too.
+  
+<details>
+  <summary>Simple Logic Expression (Shell)</summary>
+  
+```c#
+
+>> true && true
+True
+>> false && false
+False
+
+```
+</details>
+
+
+<details>
+  <summary>Complex Order of Operations Expressions</summary>
+	Working as far as I know*, I'm unable to test every possible input but all the ones I've tested have worked so far...
+  
+```c#
+
+>> true && !(false || !(true && true))
+True
+```
+
+Just to check:
+
+=> TRUE AND NOT(FALSE OR NOT(TRUE AND TRUE))
+=> TRUE AND NOT(FALSE OR FALSE)
+=> TRUE AND TRUE
+= TRUE
+
+  
+</details>
+
+<details>
+  <summary>Boolean Variable Declaration & Usage</summary>
+	
+  
+```c#
+
+>> bool testing = true && false;
+>> testing
+False
+>> if (testing) {
+2       outputln("Testing is true");
+3  } else {
+4       outputln("Testing is false");
+5  }
+6
+Testing is false
+>>
+
+```
+
+  
+</details>
+</details>
+
+  </details>
 
 <details>
 <summary>While Loops</summary>
@@ -161,7 +241,92 @@ Found! Y 1351
 </details>
 
   </details>
+
+<details>
+<summary>Subroutines</summary>
+Currently there is no ability to return values, but they can take parameters.
   
+<details>
+  <summary>Simple Recursive Counting</summary>
+  
+```c#
+
+func Count(int start, int finish) {
+	outputln(start);
+
+	if (start < finish) {
+		Count(start+1, finish);
+	}
+	else {
+		outputln("Finished counting!");
+	}
+}
+
+Count(1, 10);
+
+
+```
+
+Program running:
+```
+-------------------- PROGRAM STARTED --------------------
+1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+Finished counting!
+-------------------- PROGRAM ENDED --------------------
+```
+</details>
+
+
+<details>
+  <summary>Guessing Game Subroutine Implementation</summary>
+  
+```c#
+
+func GuessingGame(string toGuess, int maxGuesses) {
+	int guessAmount = 0;
+	string guess = "";
+
+	while (guessAmount < maxGuesses && toGuess != guess) {
+		outputln("Guess the password.");
+		inputStr(guess);
+		guessAmount = guessAmount + 1;
+	}
+
+	if (toGuess == guess) { outputStringInt("You guessed it! Attempts: ", guessAmount); }
+	else {
+		outputln("You didn't guess it");
+	}
+
+}
+
+GuessingGame("abc123", 5);
+```
+
+Program running:
+```
+-------------------- PROGRAM STARTED --------------------
+Guess the password.
+> abc12
+Guess the password.
+> abc123
+You guessed it! Attempts: 2
+-------------------- PROGRAM ENDED --------------------
+
+```
+  
+</details>
+</details>
+
+  </details>
 
 
 # Points of Interest
