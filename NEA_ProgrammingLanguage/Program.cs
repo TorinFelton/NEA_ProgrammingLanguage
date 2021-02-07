@@ -4,7 +4,7 @@ using Evaluator_Module;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-
+Added using System.Threading;
 
 namespace NEA_ProgrammingLanguage
 {
@@ -40,7 +40,11 @@ namespace NEA_ProgrammingLanguage
                         }
 
                         cmdShell.Run(total);
-                    } else
+                    } else if (!input.EndsWith(";"))
+                    {
+                        Console.WriteLine(cmdShell.ExpressionResult(input));
+                    }
+                    else
                     {
                         cmdShell.Run(input);
                     }
@@ -81,6 +85,7 @@ namespace NEA_ProgrammingLanguage
                 Console.WriteLine("-------------------- PROGRAM ENDED --------------------");
             }
         }
+
 
     }
 }

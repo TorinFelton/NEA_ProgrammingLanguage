@@ -20,9 +20,16 @@ namespace NEA_ProgrammingLanguage
 
         public void Run(string toRun)
         {
-            ShellTokeniser = new Tokeniser(toRun);
-            ShellParser = new Parser(ShellTokeniser.Tokenise().ToList());
-            ShellEvaluator.Evaluate(ShellParser.ParseTokens());
+                ShellTokeniser = new Tokeniser(toRun);
+                ShellParser = new Parser(ShellTokeniser.Tokenise().ToList());
+                ShellEvaluator.Evaluate(ShellParser.ParseTokens());
+        }
+
+        public string ExpressionResult(string inputLine)
+        {
+            ShellTokeniser = new Tokeniser(inputLine);
+            return ShellEvaluator.ResolveExpression(ShellTokeniser.Tokenise().ToList()).Value();
+
         }
 
         public void OutputColour(string toOutput, ConsoleColor colour)

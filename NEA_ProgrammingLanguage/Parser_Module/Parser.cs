@@ -160,7 +160,8 @@ namespace Parser_Module
             }
 
 
-            tokQueue.MoveNext(); // Done! Now skip over the ";" - in the while loop we stopped when we 'peeked' it, but it isn't 'popped' out the queue yet.
+            if (tokQueue.More()) tokQueue.MoveNext(); // Done! Now skip over the ";" - in the while loop we stopped when we 'peeked' it, but it isn't 'popped' out the queue yet.
+            else throw new SyntaxError(); // Just make sure that it actually existed and loop didn't stop as it ran out of tokens
 
             // We have all the data we need - we can create a VarDeclare object now
 
@@ -229,7 +230,8 @@ namespace Parser_Module
 
             // After collection has ended we should be at token ')' in example 'output("testing");'
             //                                                        We need to skip this token ^
-            tokQueue.MoveNext(); // Skip the ";"
+            if (tokQueue.More()) tokQueue.MoveNext(); // Skip the ";"
+            else throw new SyntaxError(); // error if line doesn't end with ';'
 
             return new FuncCall(funcName, arguments);
         }
@@ -294,7 +296,8 @@ namespace Parser_Module
             }
 
 
-            tokQueue.MoveNext(); // Done! Now skip over the ";" - in the while loop we stopped when we 'peeked' it, but it isn't 'popped' out the queue yet.
+            if (tokQueue.More()) tokQueue.MoveNext(); // Done! Now skip over the ";" - in the while loop we stopped when we 'peeked' it, but it isn't 'popped' out the queue yet.
+            else throw new SyntaxError(); // if line doesn't end with ';', error
 
             return new VarChange(varName, varValue);
         }
