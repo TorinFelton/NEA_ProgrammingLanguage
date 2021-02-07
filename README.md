@@ -15,9 +15,11 @@ Repo for my AQA A-Level Computer Science Non-Exam Assessment (coursework).
 (Experimental) Targets:
 - [x] Else statements
 - [ ] Else if statements
-- [x] While statements
-- [ ] More advanced condition parsing (currently only supports 1 comparison)
-  - [ ] Boolean variable type
+- [x] While loops
+- [x] More advanced condition parsing (currently only supports 1 comparison)
+  - [x] Boolean variable type
+- [x] Shell implementation
+- [x] Subroutines
   
 The experimental targets are a lot less likely to be implemented and have not been designed prior like the NEA ones.
 
