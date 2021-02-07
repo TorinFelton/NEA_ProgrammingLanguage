@@ -52,11 +52,21 @@ namespace Errors
         }
     }
 
+    class ArgumentRangeException : Exception
+    {
+        public ArgumentRangeException() : base()
+        {
+            Error.ShowError("ARGUMENT RANGE error. Check your function calls have the required amount of arguments.");
+        }
+    }
+
     static class Error
     {
         public static void ShowError(string err) // Pause program (input prompt) then kill it.
         {
+            Console.ForegroundColor = ConsoleColor.Red;
             Console.WriteLine(err);
+            Console.ForegroundColor = ConsoleColor.Gray;
             Console.ReadLine(); // Used to pause it, Enter required to move on
             Environment.Exit(1); // Exits process
         }

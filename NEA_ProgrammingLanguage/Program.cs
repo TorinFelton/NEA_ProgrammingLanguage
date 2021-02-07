@@ -33,7 +33,7 @@ namespace NEA_ProgrammingLanguage
 
                         while (balance != 0)
                         {
-                            cmdShell.OutputColour(lineNumber++.ToString(), ConsoleColor.Green);
+                            cmdShell.OutputColour(lineNumber++ + "  ", ConsoleColor.Green);
                             total += Console.ReadLine();
                             if (total.EndsWith("{")) balance++;
                             else if (total.EndsWith("}")) balance--;

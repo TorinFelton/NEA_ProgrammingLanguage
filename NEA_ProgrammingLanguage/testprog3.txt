@@ -1,4 +1,18 @@
-﻿func outputStringInt(string strOutput, int intOutput) {
+﻿func Count(int start, int finish) {
+	outputln(start);
+
+	if (start < finish) {
+		Count(start+1, finish);
+	}
+	else {
+		outputln("Finished counting!");
+	}
+}
+
+Count(0);
+
+
+func outputStringInt(string strOutput, int intOutput) {
 	output(strOutput);
 	outputln(intOutput);
 }
@@ -22,17 +36,3 @@ func GuessingGame(string toGuess, int maxGuesses) {
 
 GuessingGame("abc123", 5);
 
-func Count(int n) {
-	if (n <= 0) {
-		outputln("Must be a positive int");
-	}
-	if (n > 1) {
-		outputln("Completed counting");
-	}
-
-	else { 
-		Count(n+1);
-	}
-}
-
-Count(0);

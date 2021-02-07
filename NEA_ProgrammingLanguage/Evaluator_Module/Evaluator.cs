@@ -435,8 +435,12 @@ namespace Evaluator_Module
             Dictionary<string, Token> funcVariableScope = new Dictionary<string, Token>();
 
             int index = 0;
+            List<List<Token>> splitArgs = Token.TokenSplit(",", arguments).ToList();
+
+            if (splitArgs.Count != funcToRun.GetParameters().Count) throw new ArgumentRangeException();
+
             // separate arguments
-            foreach (List<Token> argument in Token.TokenSplit(",", arguments))
+            foreach (List<Token> argument in splitArgs)
             {
                 Token resolvedArgumentExpr = ResolveExpression(argument);
                 // Check it matches type with parameter defined in funcdeclare
@@ -450,7 +454,7 @@ namespace Evaluator_Module
             }
 
             Evaluator eval = new Evaluator(funcVariableScope, functions);
-            eval.Evaluate(funcToRun.GetcbContents());
+            eval.Evaluate(funcToRun.GetcbContents().ToList());
         }
     }
 }
