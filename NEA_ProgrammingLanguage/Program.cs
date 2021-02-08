@@ -49,6 +49,8 @@ namespace NEA_ProgrammingLanguage
 
             Console.WriteLine("-------------------- PROGRAM ENDED --------------------");
 
+            Console.ReadLine();
+
         }
     }
 }
