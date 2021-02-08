@@ -20,15 +20,31 @@ namespace NEA_ProgrammingLanguage
 
         public void Run(string toRun)
         {
+            try
+            {
                 ShellTokeniser = new Tokeniser(toRun);
                 ShellParser = new Parser(ShellTokeniser.Tokenise().ToList());
                 ShellEvaluator.Evaluate(ShellParser.ParseTokens());
+            } catch
+            {
+                //ShellEvaluator = new Evaluator();
+                // Evaluator would be reset by above, but no need. Shell can keep running.
+            }
         }
 
         public string ExpressionResult(string inputLine)
         {
-            ShellTokeniser = new Tokeniser(inputLine);
-            return ShellEvaluator.ResolveExpression(ShellTokeniser.Tokenise().ToList()).Value();
+            try
+            {
+                ShellTokeniser = new Tokeniser(inputLine);
+                return ShellEvaluator.ResolveExpression(ShellTokeniser.Tokenise().ToList()).Value();
+            } catch
+            {
+                //ShellEvaluator = new Evaluator();
+                // Would be used to reset variable & function scope on error encounter, but it isn't needed
+                // Shell can just chew up errors and continue
+                return "";
+            }
 
         }
 
