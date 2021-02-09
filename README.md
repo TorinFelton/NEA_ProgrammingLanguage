@@ -25,6 +25,102 @@ The experimental targets are a lot less likely to be implemented and have not be
 # Addition Notes
 
 <details>
+<summary>Subroutines</summary>
+
+<details>
+	<summary> Recursive fibonacci nth term </summary>
+	Not the most efficient way, but it just tests the recursion and return statements.
+
+	```c#
+func fib(int n) returns int {
+	if (n <= 1) {
+		return n;
+	}
+	return fib(n-1) + fib(n-2);
+}
+	```
+  
+<details>
+  <summary>Simple Recursive Counting</summary>
+  
+```c#
+
+func Count(int start, int finish) {
+	outputln(start);
+
+	if (start < finish) {
+		Count(start+1, finish);
+	}
+	else {
+		outputln("Finished counting!");
+	}
+}
+
+Count(1, 10);
+
+
+```
+
+Program running:
+```
+-------------------- PROGRAM STARTED --------------------
+1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+Finished counting!
+-------------------- PROGRAM ENDED --------------------
+```
+</details>
+
+
+<details>
+  <summary>Guessing Game Subroutine Implementation</summary>
+  
+```c#
+
+func GuessingGame(string toGuess, int maxGuesses) {
+	int guessAmount = 0;
+	string guess = "";
+
+	while (guessAmount < maxGuesses && toGuess != guess) {
+		outputln("Guess the password.");
+		inputStr(guess);
+		guessAmount = guessAmount + 1;
+	}
+
+	if (toGuess == guess) { outputStringInt("You guessed it! Attempts: ", guessAmount); }
+	else {
+		outputln("You didn't guess it");
+	}
+
+}
+
+GuessingGame("abc123", 5);
+```
+
+Program running:
+```
+-------------------- PROGRAM STARTED --------------------
+Guess the password.
+> abc12
+Guess the password.
+> abc123
+You guessed it! Attempts: 2
+-------------------- PROGRAM ENDED --------------------
+
+```
+  
+</details>
+</details>
+
+<details>
 <summary>Shell Usage</summary>
 I've implemented an interactive shell, similar to that of Python. You are able to type normal programming statements and flow control in, but you are also (like Python) able to just type an expression in and have it evaluated.
 The shell has text colouring too, here is what it looks like on the Windows Terminal Preview: https://imgur.com/a/DC17xAZ
@@ -242,89 +338,7 @@ Found! Y 1351
 
   </details>
 
-<details>
-<summary>Subroutines</summary>
-Currently there is no ability to return values, but they can take parameters.
-  
-<details>
-  <summary>Simple Recursive Counting</summary>
-  
-```c#
 
-func Count(int start, int finish) {
-	outputln(start);
-
-	if (start < finish) {
-		Count(start+1, finish);
-	}
-	else {
-		outputln("Finished counting!");
-	}
-}
-
-Count(1, 10);
-
-
-```
-
-Program running:
-```
--------------------- PROGRAM STARTED --------------------
-1
-2
-3
-4
-5
-6
-7
-8
-9
-10
-Finished counting!
--------------------- PROGRAM ENDED --------------------
-```
-</details>
-
-
-<details>
-  <summary>Guessing Game Subroutine Implementation</summary>
-  
-```c#
-
-func GuessingGame(string toGuess, int maxGuesses) {
-	int guessAmount = 0;
-	string guess = "";
-
-	while (guessAmount < maxGuesses && toGuess != guess) {
-		outputln("Guess the password.");
-		inputStr(guess);
-		guessAmount = guessAmount + 1;
-	}
-
-	if (toGuess == guess) { outputStringInt("You guessed it! Attempts: ", guessAmount); }
-	else {
-		outputln("You didn't guess it");
-	}
-
-}
-
-GuessingGame("abc123", 5);
-```
-
-Program running:
-```
--------------------- PROGRAM STARTED --------------------
-Guess the password.
-> abc12
-Guess the password.
-> abc123
-You guessed it! Attempts: 2
--------------------- PROGRAM ENDED --------------------
-
-```
-  
-</details>
-</details>
 
   </details>
 

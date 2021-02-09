@@ -477,10 +477,13 @@ namespace Evaluator_Module
             if (inExpr)
             {
                 if (!eval.variableScope.ContainsKey("_RETURN")) throw new ReturnMissingError();
+
                 Token returnedValue = eval.variableScope["_RETURN"];
-                if (!returnedValue.Type().Equals(funcToRun.GetReturnType())) throw new ReturnTypeError();
                 // Value that function returns will be stored as variable named '_RETURN'
                 // Variable declarations cannot have '_' at the start, so no possible overwrite of the return value
+
+                if (!returnedValue.Type().Equals(funcToRun.GetReturnType())) throw new ReturnTypeError();
+
 
                 return new Token(
                     returnedValue.Type(),
