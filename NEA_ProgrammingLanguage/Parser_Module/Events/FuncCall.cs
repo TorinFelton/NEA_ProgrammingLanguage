@@ -33,11 +33,11 @@ namespace Parser_Module.Events
         }
     }
 
-    class ReturnValue : Event
+    class ReturnStatement : Event
     {
         private List<Token> toReturn;
 
-        public ReturnValue(List<Token> toReturn)
+        public ReturnStatement(List<Token> toReturn)
         {
             this.type = "RETURN_VALUE";
             this.toReturn = toReturn;
@@ -51,6 +51,15 @@ namespace Parser_Module.Events
             string toOutput = "";
             foreach (Token tok in toReturn) toOutput += tok.Value();
             return "RETURN_VALUE: " + toOutput;
+        }
+
+        public static bool ContainsReturnStatement(List<Step> evalSteps)
+        {
+            foreach (Step evalStep in evalSteps)
+            {
+                if (evalStep is ReturnStatement) return true;
+            }
+            return false;
         }
     }
 }

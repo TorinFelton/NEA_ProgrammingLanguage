@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "NEA_ProgrammingLanguage": {
+      "commandName": "Project",
+      "commandLineArgs": "-shell"
+    }
+  }
+}

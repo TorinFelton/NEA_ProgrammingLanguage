@@ -24,7 +24,7 @@ namespace Errors
     {
         public TypeMatchError() : base()
         {
-            Error.ShowError("TYPE_MATCH error. Types in expression are not compatible.");
+            Error.ShowError("TYPE MATCH error. Types in expression are not compatible.");
         }
     }
 
@@ -40,7 +40,7 @@ namespace Errors
     {
         public DeclareError() : base()
         {
-            Error.ShowError("DECLARE_ERROR. Variable already exists.");
+            Error.ShowError("DECLARE ERROR. Variable or function already exists.");
         }
     }
 
@@ -52,11 +52,43 @@ namespace Errors
         }
     }
 
-    class ArgumentRangeException : Exception
+    class ArgumentRangeError : Exception
     {
-        public ArgumentRangeException() : base()
+        public ArgumentRangeError() : base()
         {
             Error.ShowError("ARGUMENT RANGE error. Check your function calls have the required amount of arguments.");
+        }
+    }
+
+    class ReturnTypeError : Exception
+    {
+        public ReturnTypeError() : base()
+        {
+            Error.ShowError("RETURN TYPE error. The returned type does not match that of the defined function.");
+        }
+    }
+
+    class ReturnMissingError : Exception
+    {
+        public ReturnMissingError() : base()
+        {
+            Error.ShowError("RETURN MISSING error. You have a declared a function to return something, but there is no return statement.");
+        }
+    }
+
+    class IntConvertError : Exception
+    {
+        public IntConvertError() : base()
+        {
+            Error.ShowError("CONVERSION (Int) error. Cannot convert value to Integer.");
+        }
+    }
+
+    class BoolConvertError : Exception
+    {
+        public BoolConvertError() : base()
+        {
+            Error.ShowError("CONVERSION (Bool) error. Cannot conert value to Bool.");
         }
     }
 

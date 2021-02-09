@@ -110,7 +110,7 @@ namespace Parser_Module
 
                         if (!GrammarTokenCheck(tokQueue.MoveNext(), ";")) throw new SyntaxError(); // did not end with a ';', cause error
 
-                        EvaluationSteps.Add(new ReturnValue(expr));
+                        EvaluationSteps.Add(new ReturnStatement(expr));
                     }
 
                     else if (GrammarTokenCheck(tokQueue.Next(), "("))
@@ -317,6 +317,8 @@ namespace Parser_Module
             // next token should be {
             if (!GrammarTokenCheck(nextTok, "{")) throw new SyntaxError();
 
+
+
             // Next token(s) should all be programming statements inside the code block { }
             // We need to collect these so we can parse them
             List<Token> codeBlockTokens = CollectInsideBrackets("{", "}", ref tokQueue);
@@ -324,6 +326,11 @@ namespace Parser_Module
             Parser parseTokens = new Parser(codeBlockTokens); // Create new parser object with only codeblock tokens
             List<Step> codeBlockContents = parseTokens.ParseTokens(); // (recursion) Call parse function to parse the codeblock tokens and output a list of Step
 
+            if (returnType.Length > 0) // If the function returns something
+            {
+                if (!ReturnStatement.ContainsReturnStatement(codeBlockContents)) throw new ReturnMissingError(); // Function is meant to return something but has no return statement
+
+            }
 
             return new FuncDeclare(funcName.Value(), parameters, codeBlockContents, returnType);
         }

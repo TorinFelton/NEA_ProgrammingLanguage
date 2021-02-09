@@ -16,7 +16,7 @@ namespace Evaluator_Module
     {
         private Dictionary<string, Token> variableScope;
         private Dictionary<string, FuncDeclare> functions = new Dictionary<string, FuncDeclare>();
-        private static List<string> predefinedFuncNames = new List<string> { "inputstr", "inputint", "output", "outputln" };
+        private static List<string> predefinedFuncNames = new List<string> {"output", "outputln", "int", "str", "bool", "input"};
 
         public Evaluator()
         {
@@ -119,17 +119,7 @@ namespace Evaluator_Module
                     FuncCall functionCall = (FuncCall)evalStep; // Cast as we know it is a FuncCall obj now
                     if (predefinedFuncNames.Contains(functionCall.GetName()))
                     {
-                        if (!functionCall.GetName().Equals("inputstr") && !functionCall.GetName().Equals("inputint")) // If NOT calling 'input' function
-                        {
-                            CallInBuiltFunction(functionCall.GetName(), ResolveExpression(functionCall.GetArguments()));
-                            // Call function with name and *resolved* list of arguments
-                            // Resolve function always outputs a single token which is the result of an expression (list of tokens) being evaluated 
-                        } else
-                        // SPECIAL CASE: Calling inputStr or inputInt functions indicates that the 'argument' is NOT an expression to be resolved, but rather a variable name to store input value in.
-                        // This means functionCall.Argumnets() will only have 1 token:
-                        {
-                            CallInBuiltFunction(functionCall.GetName(), functionCall.GetArguments()[0]); // Pass in first value in Arguments as there only should be one - the variable to be input to
-                        }
+                        CallInBuiltFunction(functionCall.GetName(), functionCall.GetArguments());
                     } else
                     {
                         CallFunction(functionCall.GetName(), functionCall.GetArguments(), false);
@@ -139,12 +129,14 @@ namespace Evaluator_Module
                 {
                     FuncDeclare funcDec = (FuncDeclare)evalStep; // We know it is a FuncDeclare now
 
+                    if (functions.ContainsKey(funcDec.GetName())) throw new DeclareError();
+
                     functions.Add(funcDec.GetName(), funcDec); // add to list of defined functions, no more action needed for now.
                 }
                 else if (evalStep.Type().Equals("RETURN_VALUE"))
                 {
                     // Returning a value
-                    ReturnValue retVal = (ReturnValue)evalStep;
+                    ReturnStatement retVal = (ReturnStatement)evalStep;
 
                     Token toReturn = ResolveExpression(retVal.GetReturnedValue()); // Resolve expression to return
 
@@ -297,9 +289,14 @@ namespace Evaluator_Module
                     {
                         tokQ.MoveNext(); // Skip the '('
 
-                        List<Token> args = Parser.CollectInsideBrackets("(", ")", ref tokQ); // collec arguments
+                        List<Token> args = Parser.CollectInsideBrackets("(", ")", ref tokQ); // collect arguments
 
-                        toAdd = CallFunction(tok.Value(), args, true); // Add result of function call
+                        if (predefinedFuncNames.Contains(tok.Value())) // Some built ins also return values, so check if it is one
+                        {
+                            toAdd = CallInBuiltFunction(tok.Value(), args);
+                        }
+                        else toAdd = CallFunction(tok.Value(), args, true); // Add result of function call
+
                     }
                     else if (variableScope.ContainsKey(tok.Value()))
                     // If that variable exists
@@ -401,56 +398,48 @@ namespace Evaluator_Module
         // simplified: return tok1.Type == tok2.Type && tok1.Value == tok2.Value
         // Using .Equals instead of == to avoid wrong definition of 'equal', .Equals is for literal equality in value
 
-        public void CallInBuiltFunction(string funcName, Token argument)
+        public Token CallInBuiltFunction(string funcName, List<Token> arguments)
             // built in functions. todo: better dynamic handling instead of hard code
         {
+            Token toReturn = new Token("", "");
             funcName = funcName.ToLower(); // We do not need to be case sensitive for our language.
-            if (funcName.Equals("output")) Console.Write(argument.Value()); // Write to console with no new line
-            else if (funcName.Equals("outputln")) Console.WriteLine(argument.Value()); // Write with new line
-            else if (funcName.Equals("inputstr"))
+            if (funcName.Equals("output")) Console.Write(ResolveExpression(arguments).Value()); // Write to console with no new line
+            else if (funcName.Equals("outputln")) Console.WriteLine(ResolveExpression(arguments).Value()); // Write with new line
+            else if (funcName.Equals("int"))
             {
-                string varName = argument.Value(); // Argument passed into input() function is a VARIABLE NAME REFERENCE
+                string resultToConvert = ResolveExpression(arguments).Value().ToString();
 
-                if (!variableScope.ContainsKey(varName)) throw new ReferenceError();
-                // If variable to input to doesn't exist there is an error
-
-                if (!variableScope[varName].Type().Equals("string")) throw new TypeError();
-                // inputStr() being done to a non-string variable causes an error
-
-                Console.Write("> "); // Automatic input prompt
-                string input = Console.ReadLine();
-
-                variableScope[varName] = new Token("string", input); // Change value of variable to the input string
-            }
-            else if (funcName.Equals("inputint"))
-            {
-                string varName = argument.Value();
-
-                if (!variableScope.ContainsKey(varName)) throw new ReferenceError();
-                // If variable to input to doesn't exist there is an error
-
-                if (!variableScope[varName].Type().Equals("number")) throw new TypeError();
-                // inputInt() being done to a non-number variable causes an error
-
-                Console.Write("> "); // Automatic input prompt
-                int input;
                 try
                 {
-                    input = int.Parse(Console.ReadLine());
-                }
-                catch
+                    toReturn = new Token("number", int.Parse(resultToConvert).ToString());
+                } catch
                 {
-                    // if input is not a number, cause error
-                    throw new TypeError();
-                } 
-                // It looks weird to catch and then throw an error anyway, but I've done it so I can use my custom TypeError() instead of C#'s one
-                // My TypeError() will come up with a simple message and pause, the C# in-built error will kill the console window instead.
+                    throw new IntConvertError();
+                }
 
-                variableScope[varName] = new Token("number", input.ToString());
-                // The input is converted to an integer originally to check it is ACTUALLY a valid integer
-                // Once we know that, we can store it as a 'number' token with string value and convert it without errors later
+            }
+            else if (funcName.Equals("str"))
+            {
+                string resultToConvert = ResolveExpression(arguments).Value().ToString();
+
+                toReturn = new Token("string", resultToConvert.ToString()); // no need for error catching, everything safely converts to string (i think...)
+            }
+            else if (funcName.Equals("bool"))
+            {
+                string resultToConvert = ResolveExpression(arguments).Value().ToString().ToLower();
+
+                // kind of realising how satanic it is to store everything as a string, will probably handle it later...
+                if (!(resultToConvert.Equals("true") || resultToConvert.Equals("false"))) throw new BoolConvertError();
+                else toReturn = new Token("bool", resultToConvert);
+            }
+            else if (funcName.Equals("input"))
+            {
+                Console.Write("> ");
+                toReturn = new Token("string", Console.ReadLine());
             }
             else throw new ReferenceError(); // No function name recognised, throw error.
+
+            return toReturn;
         }
 
         public Token CallFunction(string funcName, List<Token> arguments, bool inExpr)
@@ -467,7 +456,7 @@ namespace Evaluator_Module
             {
                 List<List<Token>> splitArgs = Token.TokenSplit(",", arguments).ToList();
 
-                if (splitArgs.Count != funcToRun.GetParameters().Count) throw new ArgumentRangeException();
+                if (splitArgs.Count != funcToRun.GetParameters().Count) throw new ArgumentRangeError();
 
                 // separate arguments
                 foreach (List<Token> argument in splitArgs)
@@ -490,6 +479,7 @@ namespace Evaluator_Module
             if (inExpr)
             {
                 Token returnedValue = eval.variableScope["_RETURN"];
+                if (!returnedValue.Type().Equals(funcToRun.GetReturnType())) throw new ReturnTypeError();
                 // Value that function returns will be stored as variable named '_RETURN'
                 // Variable declarations cannot have '_' at the start, so no possible overwrite of the return value
 

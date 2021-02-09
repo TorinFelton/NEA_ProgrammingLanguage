@@ -29,7 +29,7 @@ namespace Parser_Module.Events
             this.funcName = funcName.ToLower();
             this.parameterScope = parameters;
             this.cbContents = cbContents;
-            this.ReturnType = ReturnType;
+            this.ReturnType = ReturnType.Replace("int", "number"); // No floats yet so defaulting to 'number' type for simplicity
         }
 
         public string GetName() { return funcName; }
