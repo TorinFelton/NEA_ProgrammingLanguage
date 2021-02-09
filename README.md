@@ -119,6 +119,7 @@ You guessed it! Attempts: 2
   
 </details>
 </details>
+</details>
 
 <details>
 <summary>Shell Usage</summary>
