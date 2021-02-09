@@ -326,12 +326,6 @@ namespace Parser_Module
             Parser parseTokens = new Parser(codeBlockTokens); // Create new parser object with only codeblock tokens
             List<Step> codeBlockContents = parseTokens.ParseTokens(); // (recursion) Call parse function to parse the codeblock tokens and output a list of Step
 
-            if (returnType.Length > 0) // If the function returns something
-            {
-                if (!ReturnStatement.ContainsReturnStatement(codeBlockContents)) throw new ReturnMissingError(); // Function is meant to return something but has no return statement
-
-            }
-
             return new FuncDeclare(funcName.Value(), parameters, codeBlockContents, returnType);
         }
 

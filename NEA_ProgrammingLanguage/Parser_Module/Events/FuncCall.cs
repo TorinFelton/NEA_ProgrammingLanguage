@@ -53,13 +53,5 @@ namespace Parser_Module.Events
             return "RETURN_VALUE: " + toOutput;
         }
 
-        public static bool ContainsReturnStatement(List<Step> evalSteps)
-        {
-            foreach (Step evalStep in evalSteps)
-            {
-                if (evalStep is ReturnStatement) return true;
-            }
-            return false;
-        }
     }
 }
