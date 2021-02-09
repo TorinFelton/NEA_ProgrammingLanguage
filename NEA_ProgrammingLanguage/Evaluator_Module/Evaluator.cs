@@ -35,7 +35,7 @@ namespace Evaluator_Module
 
         public void Evaluate(List<Step> evaluationSteps)
         {
-            for (int index = 0; index < evaluationSteps.Count; index++)
+            for (int index = 0; index < evaluationSteps.Count && !variableScope.ContainsKey("_RETURN"); index++)
             {
                 Step evalStep = evaluationSteps[index];
                 // .Type() can only be "VAR_DECLARE", "VAR_CHANGE", "FUNC_CALL", "IF_STATEMENT"
@@ -141,8 +141,6 @@ namespace Evaluator_Module
                     Token toReturn = ResolveExpression(retVal.GetReturnedValue()); // Resolve expression to return
 
                     variableScope.Add("_RETURN", toReturn); // Add variable named '_RETURN' to be referenced later in parent expression that calls this function.
-
-                    index = evaluationSteps.Count; // Stop any code running past this point, this turns the for loop bool to false.
 
                 }
                 else throw new SyntaxError(); // Unrecognised Step, crash program.

@@ -167,6 +167,7 @@ namespace Evaluator_Module.ExpressionEvaluation.Algorithms
                             // unary as '-' at the beginnign of expr
                             toReturn.Add(new Token("operator", "_"));
                         }
+                        else toReturn.Add(tok); // forgot to add if NOT an unary... just spent 1 hour wondering why I was getting a stack overflow only to realise it's this messing with recursive functions
                     }
                     else toReturn.Add(tok);
                 }
