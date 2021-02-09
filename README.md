@@ -19,6 +19,7 @@ The experimental branch will continue to be supported, the master will only get 
   - [x] Boolean variable type
 - [x] Shell implementation
 - [x] Subroutines
+	- [x] Recursion & Returns
   
 The experimental targets are a lot less likely to be implemented and have not been designed prior like the NEA ones.
 
@@ -30,15 +31,27 @@ The experimental targets are a lot less likely to be implemented and have not be
 <details>
 	<summary> Recursive fibonacci nth term </summary>
 	Not the most efficient way, but it just tests the recursion and return statements.
+	
+```c#
 
-	```c#
 func fib(int n) returns int {
 	if (n <= 1) {
 		return n;
 	}
 	return fib(n-1) + fib(n-2);
 }
-	```
+
+```
+Usage (via Shell):
+
+```
+>> fib(20)
+6765
+>> fib(8)
+21
+```
+
+</details>
   
 <details>
   <summary>Simple Recursive Counting</summary>
