@@ -11,14 +11,15 @@ namespace Evaluator_Module.ExpressionEvaluation.Algorithms
     {
         public static TreeNode BuildAST(List<Token> infix)
         /*
-         * It is easier to think of this as a reversal of an RPN calculation algorithm using stacks.
+         * 
          *
          * This is an implementation of Djikstra's Shunting-yard algorithm
-         * It is not 100% true to the original; instead of resolving each expression in the stack it builds a tree
-         * We use two stacks: one for operators (e.g +, -, /) and one for the operands (integer)
-         * The numstack is not actually storing Integers, but more TreeNodes that represent Integers
+         * It is not 100% true to the original, but quite close
+         * 
+         * We use two stacks: one for operators (e.g +, -, /) and one for the numbers (integers only supported)
+         * The numstack is not actually storing Integer types, but TreeNodes that represent Integers
          *      The numstack TreeNodes could just be of value '1' or could ALSO be a 'leaf' of the tree
-         *      A 'leaf' is a small calculation that represents an Integer to be calculated
+         *      A 'leaf' is a calculation that represents an Integer to be calculated
          *      An example leaf could be:
          *                  +
          *                1   2
@@ -37,7 +38,8 @@ namespace Evaluator_Module.ExpressionEvaluation.Algorithms
         {
             Stack<BinOp> operatorStack = new Stack<BinOp>();
             Stack<TreeNode> numStack = new Stack<TreeNode>();
-            infix = findUnaryMinus(infix);
+
+            infix = findUnaryMinus(infix); // Replace unary minus with "_" to distinguish
 
             foreach (Token token in infix)
             {
@@ -48,7 +50,10 @@ namespace Evaluator_Module.ExpressionEvaluation.Algorithms
 
                 else if (token.Type().Equals("number")) // If it is a number (Integers only supported), add to numStack
                 {
-                    numStack.Push(new Num(int.Parse(token.Value())));
+                    numStack.Push(
+                        new Num(
+                            int.Parse(token.Value()
+                        )));
                     // Simply create a new Num (child class of TreeNode) node with the number in the character, converted to Integer type.
                 }
 
@@ -57,11 +62,11 @@ namespace Evaluator_Module.ExpressionEvaluation.Algorithms
                     // BinOp.precedences is a DICTIONARY of all operators & their precedence (represented in Integers)
                     // If token.Value() IS an OPERATOR and is NOT ")"
                 {
-                    // We have found an operator like +
-                    // We need to resolve the operands into leaves first
+                    // We have found an operator, e.g '+'
+                    // We need to resolve the operands into leaves of the tree first
                     while (operatorStack.Count > 0 && BinOp.precedences[operatorStack.Peek().value] >= BinOp.precedences[token.Value()])
                         // While the precedence of the top of the operatorStack is bigger than or equal to the precedence of the char
-                        // Remember that precedences are stored as Integers, so we can compare them easily like this
+                        // Remember that precedences of operators are stored as Integers in the dictionary, so we can compare them easily like this
                     {
                         BinOp binOperator = operatorStack.Pop();
                         // This will be the parent node of our 'leaf'
@@ -69,7 +74,7 @@ namespace Evaluator_Module.ExpressionEvaluation.Algorithms
 
                         if (binOperator.value.Equals("_")) // unary minus
                         {
-                            binOperator.left = numStack.Pop();
+                            binOperator.left = numStack.Pop(); // only needs one operand as unary minus only takes one
                         }
 
                         else
@@ -150,6 +155,7 @@ namespace Evaluator_Module.ExpressionEvaluation.Algorithms
         }
 
         public static List<Token> findUnaryMinus(List<Token> exprTokens)
+            // This can probably be designed and optimised better but it was a quick implementation to prove concept
         {
             List<Token> toReturn = new List<Token>();
 
@@ -157,17 +163,22 @@ namespace Evaluator_Module.ExpressionEvaluation.Algorithms
 
             while (index < exprTokens.Count)
             {
-                Token tok = exprTokens[index];
+                Token tok = exprTokens[index]; // Tokens are stored like this: (type, value). Values are stored as strings for other reasons outside of expr evaluation.
                 if (tok.Type().Equals("operator"))
                 {
                     if (tok.Value().Equals("-"))
                     {
                         if (index == 0 || exprTokens[index - 1].Value().Equals("(") || exprTokens[index - 1].Type().Equals("operator"))
+                            // If the FIRST operator is -
+                            // OR IF the Token before is '('
+                            // OR IF the Token before is any other operator
+
+                            // ^ these are the rules for recognising an UNARY minus sign
                         {
                             // unary as '-' at the beginnign of expr
                             toReturn.Add(new Token("operator", "_"));
                         }
-                        else toReturn.Add(tok); // forgot to add if NOT an unary... just spent 1 hour wondering why I was getting a stack overflow only to realise it's this messing with recursive functions
+                        else toReturn.Add(tok); // else just add the NORMAL minus sign
                     }
                     else toReturn.Add(tok);
                 }

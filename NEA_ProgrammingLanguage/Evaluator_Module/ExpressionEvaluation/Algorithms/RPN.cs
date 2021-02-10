@@ -16,9 +16,10 @@ namespace Evaluator_Module.ExpressionEvaluation.Algorithms
                 if (treeNode is Num) nodeStack.Push(treeNode); // If it is a Num (Integer) then just push onto stack
                 else if (treeNode is BinOp) // If it is a BinOp (operator, root of leaf) then pop last two operands and calculate:
                 {
-                    if (treeNode.value.Equals("_"))
+                    if (treeNode.value.Equals("_")) // unary minus
                     {
-                        Num arg = (Num)nodeStack.Pop();
+                        Num arg = (Num)nodeStack.Pop(); // Only pop one off the stack, unary minus only operates on one operand
+
                         nodeStack.Push(new Num(arg.IntValue() * (-1))); // unary minus, so negate the operand
                     }
                     else
