@@ -6,7 +6,7 @@ namespace Parser_Module
 {
     static class Syntax // This is just a class for definitions and checking
     {
-        private static List<string> types = new List<string>() { "int", "string", "bool"};
+        private static List<string> types = new List<string>() { "int", "string", "bool", "void"};
         private static List<string> comparators = new List<string>() { "==", "!=", ">", "<", ">=", "<=" };
         
         public static bool IsType(string text)

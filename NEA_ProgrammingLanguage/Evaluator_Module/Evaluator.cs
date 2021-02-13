@@ -154,12 +154,14 @@ namespace Evaluator_Module
             // First, replace variable name references with their values.
             expr = VariablesToValues(expr);
 
-            // Now check tokens are all the same type in the expression (except grammar tokens)
 
+            if (expr.Count == 0) return new Token("", "");
+
+            // Now check tokens are all the same type in the expression (except grammar tokens)
             string exprResultType = CheckTypes(expr); // This func will throw error if they aren't
             // exprResultType now stores the final expected type for when expression is resolved to one token
-            // e.g 1 + 1 => resolves to 'number'
-            // e.g "1" + "1" => resolves to 'string'
+            // e.g 1 + 1 => resolves type to 'number'
+            // e.g "1" + "1" => resolves type to 'string'
 
             if (exprResultType.Equals("string"))
                 // Indicates that we are dealing with a string expression
@@ -306,7 +308,9 @@ namespace Evaluator_Module
                 }
                 else toAdd = tok;
 
-                newExpr.Add(toAdd);
+                if (!toAdd.Type().Equals("")) newExpr.Add(toAdd); // for void function returns, don't return anything.
+
+
             }
 
             return newExpr;
@@ -474,7 +478,7 @@ namespace Evaluator_Module
             Evaluator eval = new Evaluator(funcVariableScope, functions);
             eval.Evaluate(funcToRun.GetcbContents().ToList());
 
-            if (inExpr)
+            if (inExpr && !funcToRun.GetReturnType().Equals("void")) // 'returns void' means function will return blank token (see line 493)
             {
                 if (!eval.variableScope.ContainsKey("_RETURN")) throw new ReturnMissingError();
 

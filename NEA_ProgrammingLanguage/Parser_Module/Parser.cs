@@ -299,20 +299,20 @@ namespace Parser_Module
             Token nextTok = tokQueue.MoveNext();
             string returnType = "";
 
-            if (nextTok.Type().Equals("identifier") && nextTok.Value().ToLower().Equals("returns"))
-                // We now know it returns a value
-                // PATTERN EXPECTED: 'returns <type>'
+            if (!(nextTok.Type().Equals("identifier") && nextTok.Value().ToLower().Equals("returns"))) throw new ReturnMissingError();
+
+            // We now know it returns a value
+            // PATTERN EXPECTED: 'returns <type>'
+            
+            nextTok = tokQueue.MoveNext(); // Should now be the <type>
+
+            if (Syntax.IsType(nextTok.Value()))
             {
-                nextTok = tokQueue.MoveNext(); // Should now be the <type>
+                returnType = nextTok.Value();
 
-                if (Syntax.IsType(nextTok.Value())) 
-                {
-                    returnType = nextTok.Value();
-
-                    nextTok = tokQueue.MoveNext(); // should move onto the { now
-                }
-                else throw new ReferenceError();
+                nextTok = tokQueue.MoveNext(); // should move onto the { now
             }
+            else throw new ReferenceError();
 
             // next token should be {
             if (!GrammarTokenCheck(nextTok, "{")) throw new SyntaxError();
