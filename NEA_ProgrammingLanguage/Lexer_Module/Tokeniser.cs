@@ -37,6 +37,14 @@ namespace Lexer_Module
 
                 if (" \n\t\r".Contains(character)) continue; // We do not care about spaces or new lines, skip iteration
 
+                
+                else if (character == '/' && contents.More() && contents.Next() == '/')
+                    // Double '/' signifies comments. Skip all characters until a new line is found.
+                {
+                    while (contents.Next() != '\n') contents.MoveNext();
+                }
+                
+
                 // Operators
                 else if ("+-*/^".Contains(character)) yield return new Token("operator", character.ToString());
 
