@@ -14,20 +14,20 @@ namespace Evaluator_Module
 {
     class Evaluator
     {
-        private Dictionary<string, Token> variableScope;
+        private Scope variableScope;
         private Dictionary<string, FuncDeclare> functions = new Dictionary<string, FuncDeclare>();
         private static List<string> predefinedFuncNames = new List<string> {"output", "outputln", "type", "int", "str", "bool", "input"};
 
         public Evaluator()
         {
-            this.variableScope = new Dictionary<string, Token>();
+            this.variableScope = new Scope();
             // Variables are all stored in this dictionary
             // Their value is stored as a single Token object
             // Remember from Tokeniser - Tokens can have types like 'number' or 'string' (but all are *stored* as strings)
             // To check a variable type, we check the type of its Token (e.g if its 'number' we have an integer variable)
         }
 
-        public Evaluator(Dictionary<string, Token> variableScope, Dictionary<string, FuncDeclare> functions) // option to pre-define variables
+        public Evaluator(Scope variableScope, Dictionary<string, FuncDeclare> functions) // option to pre-define variables
         {
             this.variableScope = variableScope;
             this.functions = functions;
@@ -35,7 +35,7 @@ namespace Evaluator_Module
 
         public void Evaluate(List<Step> evaluationSteps)
         {
-            for (int index = 0; index < evaluationSteps.Count && !variableScope.ContainsKey("_RETURN"); index++)
+            for (int index = 0; index < evaluationSteps.Count && !variableScope.VarExists("_RETURN"); index++)
             {
                 Step evalStep = evaluationSteps[index];
                 // .Type() can only be "VAR_DECLARE", "VAR_CHANGE", "FUNC_CALL", "IF_STATEMENT"
@@ -81,7 +81,7 @@ namespace Evaluator_Module
                 // Declare a variable in the variableScope
                 {
                     VarDeclare varDecl = (VarDeclare)evalStep; // Cast as we know it's a VarDeclare obj
-                    if (variableScope.ContainsKey(varDecl.GetName())) throw new DeclareError();
+                    if (variableScope.VarExists(varDecl.GetName())) throw new DeclareError();
                     // If scope already has a variable that name, you cannot redeclare it as it already exists.
                     // Potential endpoint if variable exists - entire program will stop (crash).
                     Token varExpr = ResolveExpression(varDecl.Value());
@@ -100,17 +100,17 @@ namespace Evaluator_Module
                 {
                     VarChange varChan = (VarChange)evalStep; // Cast as we know it is a VarChange obj
 
-                    if (!variableScope.ContainsKey(varChan.GetName())) throw new ReferenceError();
+                    if (!variableScope.VarExists(varChan.GetName())) throw new ReferenceError();
                     // If variable is NOT in the variableScope then we cannot change it as it doesn't exist.
                     // Potential endpoint for program crash
-                    string varType = variableScope[varChan.GetName()].Type();
+                    string varType = variableScope.GetVarType(varChan.GetName());
                     Token newValue = ResolveExpression(varChan.Value());
 
                     if (!varType.Equals(newValue.Type())) throw new TypeError();
                     // If the new value of the variable is not the right type, then crash.
                     // Potential endpoint
                     // e.g int x = 0; x = "hi"; will cause this error
-                    variableScope[varChan.GetName()] = newValue; // Assign new value (Token)
+                    variableScope.SetVarValue(varChan.GetName(), newValue); // Assign new value (Token)
                     
                 }
                 else if (evalStep.Type().Equals("FUNC_CALL"))
@@ -298,10 +298,10 @@ namespace Evaluator_Module
                         else toAdd = CallFunction(tok.Value(), args, true); // Add result of function call
 
                     }
-                    else if (variableScope.ContainsKey(tok.Value()))
+                    else if (variableScope.VarExists(tok.Value()))
                     // If that variable exists
                     {
-                        toAdd = variableScope[tok.Value()];
+                        toAdd = variableScope.GetVarTokenValue(tok.Value());
                         // Add referenced variable's VALUE token to expression instead of the actual reference to the variable
                     }
                     else throw new ReferenceError(); // Referencing non-existent variable, throw error
@@ -453,7 +453,7 @@ namespace Evaluator_Module
 
             FuncDeclare funcToRun = functions[funcName];
 
-            Dictionary<string, Token> funcVariableScope = new Dictionary<string, Token>();
+            Scope funcVariableScope = new Scope();
 
             int index = 0;
             if (arguments.Count > 0)
@@ -482,9 +482,9 @@ namespace Evaluator_Module
 
             if (inExpr && !funcToRun.GetReturnType().Equals("void")) // 'returns void' means function will return blank token (see line 493)
             {
-                if (!eval.variableScope.ContainsKey("_RETURN")) throw new ReturnMissingError();
+                if (!eval.variableScope.VarExists("_RETURN")) throw new ReturnMissingError();
 
-                Token returnedValue = eval.variableScope["_RETURN"];
+                Token returnedValue = eval.variableScope.GetVarTokenValue("_RETURN");
                 // Value that function returns will be stored as variable named '_RETURN'
                 // Variable declarations cannot have '_' at the start, so no possible overwrite of the return value
 
