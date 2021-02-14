@@ -20,6 +20,7 @@ The experimental branch will continue to be supported, the master will only get 
 - [x] Shell implementation
 - [x] Subroutines
 	- [x] Recursion & Returns
+- [ ] Commenting
   
 The experimental targets are a lot less likely to be implemented and have not been designed prior like the NEA ones.
 
@@ -27,6 +28,40 @@ The experimental targets are a lot less likely to be implemented and have not be
 
 <details>
 <summary>Subroutines</summary>
+	
+<details>
+	<summary> Recursive Towers of Hanoi </summary>
+	
+	
+```c#
+
+func towers(int n, string sourcePole, string destPole, string auxPole) returns void {
+	if (n == 0) { }
+	else {
+		towers(n-1, sourcePole, destPole, auxPole);
+		outputln("Move disk " + str(n) + " from " + sourcePole + " to " + destPole);
+		towers(n-1, auxPole, destPole, sourcePole);
+	}
+}
+
+towers(3, "S", "D", "A");
+
+```
+Output:
+
+```
+-------------------- PROGRAM STARTED --------------------
+Move disk 1 from S to D
+Move disk 2 from S to D
+Move disk 1 from A to D
+Move disk 3 from S to D
+Move disk 1 from A to D
+Move disk 2 from A to D
+Move disk 1 from S to D
+-------------------- PROGRAM ENDED --------------------
+```
+
+</details>
 
 <details>
 	<summary> Recursive fibonacci nth term </summary>
@@ -58,7 +93,7 @@ Usage (via Shell):
   
 ```c#
 
-func Count(int start, int finish) {
+func Count(int start, int finish) returns void {
 	outputln(start);
 
 	if (start < finish) {
@@ -98,7 +133,7 @@ Finished counting!
   
 ```c#
 
-func GuessingGame(string toGuess, int maxGuesses) {
+func GuessingGame(string toGuess, int maxGuesses) returns void {
 	int guessAmount = 0;
 	string guess = "";
 
