@@ -16,7 +16,7 @@ namespace Evaluator_Module
     {
         private Dictionary<string, Token> variableScope;
         private Dictionary<string, FuncDeclare> functions = new Dictionary<string, FuncDeclare>();
-        private static List<string> predefinedFuncNames = new List<string> {"output", "outputln", "int", "str", "bool", "input"};
+        private static List<string> predefinedFuncNames = new List<string> {"output", "outputln", "type", "int", "str", "bool", "input"};
 
         public Evaluator()
         {
@@ -407,6 +407,7 @@ namespace Evaluator_Module
             funcName = funcName.ToLower(); // We do not need to be case sensitive for our language.
             if (funcName.Equals("output")) Console.Write(ResolveExpression(arguments).Value()); // Write to console with no new line
             else if (funcName.Equals("outputln")) Console.WriteLine(ResolveExpression(arguments).Value()); // Write with new line
+            else if (funcName.Equals("type")) toReturn = new Token("string", ResolveExpression(arguments).Type().Replace("number", "int"));
             else if (funcName.Equals("int"))
             {
                 string resultToConvert = ResolveExpression(arguments).Value().ToString();
@@ -414,7 +415,8 @@ namespace Evaluator_Module
                 try
                 {
                     toReturn = new Token("number", int.Parse(resultToConvert).ToString());
-                } catch
+                }
+                catch
                 {
                     throw new IntConvertError();
                 }
