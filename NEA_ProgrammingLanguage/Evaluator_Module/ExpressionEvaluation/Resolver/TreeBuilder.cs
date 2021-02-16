@@ -19,6 +19,8 @@ namespace Evaluator_Module.ExpressionEvaluation.Resolver
             Stack<Operator> operatorStack = new Stack<Operator>();
             Stack<TreeNode> operandStack = new Stack<TreeNode>();
 
+            infix = findUnaryMinus(infix);
+
             foreach (Token token in infix)
             {
 

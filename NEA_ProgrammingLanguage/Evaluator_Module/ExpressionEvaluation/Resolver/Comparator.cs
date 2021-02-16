@@ -6,14 +6,6 @@ namespace Evaluator_Module.ExpressionEvaluation.Resolver
 {
     class Comparator : Operator
     {
-        public static Dictionary<string, int> precedences = new Dictionary<string, int>()
-        {
-            {"!", 3 },
-            {"||", 2 },
-            {"&&", 2 },
-            {")", 2 },
-            {"(", 1 }
-        }; // Static dictionary of precedence levels represented by ints
 
         public Comparator(string operationValue)
         {

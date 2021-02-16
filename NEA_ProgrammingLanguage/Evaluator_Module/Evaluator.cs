@@ -148,8 +148,6 @@ namespace Evaluator_Module
 
         public Token ResolveExpression(List<Token> expr)
         {
-            Token toReturn = new Token("", "");
-
             // First, replace variable name references with their values.
             expr = VariablesToValues(expr);
 
