@@ -20,7 +20,7 @@ The experimental branch will continue to be supported, the master will only get 
 - [x] Shell implementation
 - [x] Subroutines
 	- [x] Recursion & Returns
-- [ ] Commenting
+- [x] Commenting (only in files, not shell)
   
 The experimental targets are a lot less likely to be implemented and have not been designed prior like the NEA ones.
 
