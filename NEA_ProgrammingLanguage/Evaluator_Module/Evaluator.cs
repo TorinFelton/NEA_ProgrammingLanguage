@@ -1,7 +1,6 @@
 using DataStructures;
 using Errors;
-using Evaluator_Module.ExpressionEvaluation.Algorithms;
-using Evaluator_Module.ExpressionEvaluation.Conditions;
+using Evaluator_Module.ExpressionEvaluation.Resolver;
 using Lexer_Module;
 using Parser_Module;
 using Parser_Module.Events;
@@ -157,6 +156,21 @@ namespace Evaluator_Module
 
             if (expr.Count == 0) return new Token("", "");
 
+            TreeNode result = RPN.Evaluate(Traversal.postOrder(TreeBuilder.BuildAST(expr)));
+            if (result is Number) return new Token("number", result.value);
+            else if (result is BoolOperand) return new Token("bool", result.value);
+            else if (result is StringOperand) return new Token("string", result.value);
+            else throw new TypeMatchError();
+        }
+
+        public bool ResolveBoolean(List<Token> expr)
+        {
+            Token result = ResolveExpression(expr);
+            if (result.Type().Equals("bool")) return result.Value().ToLower().Equals("true") ? true : false;
+            else throw new BoolConvertError();
+        }
+
+        /*
             // Now check tokens are all the same type in the expression (except grammar tokens)
             string exprResultType = CheckTypes(expr); // This func will throw error if they aren't
             // exprResultType now stores the final expected type for when expression is resolved to one token
@@ -213,7 +227,9 @@ namespace Evaluator_Module
 
             return toReturn;
         }
+        */
 
+        /*
         public bool ResolveBoolean(List<Token> boolExpr)
         {
             int index = 0;
@@ -267,6 +283,8 @@ namespace Evaluator_Module
                         )
                 );
         }
+        */
+
         public List<Token> VariablesToValues(List<Token> expr)
         {
             // Replace each variable in an expression with the value it references
@@ -339,6 +357,7 @@ namespace Evaluator_Module
             else return type;
         }
 
+        /*
         public bool CompareExpressions(List<Token> op1, List<Token> op2, string comparison)
         {
             bool toReturn;
@@ -392,6 +411,7 @@ namespace Evaluator_Module
 
             return toReturn;
         }
+        */
 
 
 

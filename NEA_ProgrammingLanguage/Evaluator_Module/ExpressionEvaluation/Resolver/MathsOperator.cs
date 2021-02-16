@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 
 
-namespace Evaluator_Module.ExpressionEvaluation
+namespace Evaluator_Module.ExpressionEvaluation.Resolver
 {
-    class BinOp : TreeNode
+    class MathsOperator : TreeNode
     {
         public static Dictionary<string, int> precedences = new Dictionary<string, int>()
         {
@@ -18,12 +18,12 @@ namespace Evaluator_Module.ExpressionEvaluation
             {"(", 1 }
         }; // Static dictionary of precedence levels represented by ints for ease of comparison later on - used in TreeBuilder.cs
 
-        public BinOp(string operationValue)
+        public MathsOperator(string operationValue)
         {
             this.value = operationValue;
         }
 
-        public BinOp() // parameterless option
+        public MathsOperator() // parameterless option
         {
 
         }

@@ -4,11 +4,11 @@ using System.Collections.Generic;
 using System.Text;
 using TreeTraversal;
 
-namespace Evaluator_Module.ExpressionEvaluation.Conditions
+namespace Evaluator_Module.ExpressionEvaluation.Resolver
 {
     class BoolOperand : TreeNode
     {
-        public bool boolValue;
+        private bool boolValue;
         public BoolOperand(bool boolValue)
         {
             this.boolValue = boolValue;
@@ -19,5 +19,7 @@ namespace Evaluator_Module.ExpressionEvaluation.Conditions
         {
 
         }
+
+        public bool BoolValue() { return boolValue; }
     }
 }

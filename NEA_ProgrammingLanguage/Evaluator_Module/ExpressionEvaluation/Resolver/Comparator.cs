@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 
 
-namespace Evaluator_Module.ExpressionEvaluation.Conditions
+namespace Evaluator_Module.ExpressionEvaluation.Resolver
 {
-    class Comparator : TreeNode
+    class Comparator : Operator
     {
         public static Dictionary<string, int> precedences = new Dictionary<string, int>()
         {
