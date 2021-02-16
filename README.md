@@ -27,6 +27,36 @@ The experimental targets are a lot less likely to be implemented and have not be
 # Addition Notes
 
 <details>
+	<summary>Advanced Expression Resolving</summary>
+	So this works - I don't know *exactly* how or why, but it does. 
+
+Prior to this addition, I had 2 implementations of the Djikstra Shunting-yard algorithm - one for doing the usual mathematical operations in the right order, and the other for doing logical operations like '&&' or '||'. 
+They worked separately, but the overall way expressions were handled and resolved was not overly efficient or fully functional. For example, the previous version couldn't handle a boolean expression being something like '(1 == 1) && true', as it's a diverse expression with a few different things to take into account.
+	The solution? I've merged the two djikstra implementations into one, with a big precedences dict:
+	
+```
+{"!", 5 },
+{"^", 5 },
+{"_", 5 },
+{"*", 4 },
+{"/", 4 },
+{"+", 3 },
+{"-", 3 },
+{")", 3 },
+{"||", 2 },
+{"&&", 2 },
+{"==", 2 },
+{"(", 1 }
+```
+
+This allows the algorithm to work with ANYTHING in the expression - logical & mathematical operators at once. It can therefore resolve a mathematical expression and then logically compare it with something else, etc. I've had to make quite a lot of changes to the class relationships, and I've completely removed any expression handling algorithms from the main Evaluator.cs - all of that is now done in the algorithm.
+- [The expression handling code](https://github.com/TorinFelton/NEA_ProgrammingLanguage/tree/experimental/NEA_ProgrammingLanguage/Evaluator_Module/ExpressionEvaluation/Resolver)
+- [Here is the SYA algorithm to build the AST](https://github.com/TorinFelton/NEA_ProgrammingLanguage/blob/experimental/NEA_ProgrammingLanguage/Evaluator_Module/ExpressionEvaluation/Resolver/TreeBuilder.cs)
+- [This is the modified RPN algorithm to calculate results](https://github.com/TorinFelton/NEA_ProgrammingLanguage/blob/experimental/NEA_ProgrammingLanguage/Evaluator_Module/ExpressionEvaluation/Resolver/RPN.cs)
+	
+</details>
+
+<details>
 <summary>Subroutines</summary>
 	
 <details>
