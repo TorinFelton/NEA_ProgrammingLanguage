@@ -4,10 +4,11 @@ using System.Collections.Generic;
 
 namespace Evaluator_Module.ExpressionEvaluation
 {
-    class BinOp : TreeNode
+    class Operator : TreeNode
     {
         public static Dictionary<string, int> precedences = new Dictionary<string, int>()
         {
+            {"_", 5 }, // unary minus has a higher precedence than all below
             {"^", 4 },
             {"*", 3 },
             {"/", 3 },
@@ -17,12 +18,12 @@ namespace Evaluator_Module.ExpressionEvaluation
             {"(", 1 }
         }; // Static dictionary of precedence levels represented by ints for ease of comparison later on - used in TreeBuilder.cs
 
-        public BinOp(string operationValue)
+        public Operator(string operationValue)
         {
             this.value = operationValue;
         }
 
-        public BinOp() // parameterless option
+        public Operator() // parameterless option
         {
 
         }

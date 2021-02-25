@@ -14,13 +14,22 @@ namespace Evaluator_Module.ExpressionEvaluation.Algorithms
             foreach (TreeNode treeNode in nodes)
             {
                 if (treeNode is Num) nodeStack.Push(treeNode); // If it is a Num (Integer) then just push onto stack
-                else if (treeNode is BinOp) // If it is a BinOp (operator, root of leaf) then pop last two operands and calculate:
+                else if (treeNode is Operator) // If it is a BinOp (operator, root of leaf) then pop last two operands and calculate:
                 {
-                    // Pop last two
-                    Num arg2 = (Num) nodeStack.Pop();
-                    Num arg1 = (Num) nodeStack.Pop(); // Note they are reversed, the first one to be popped is the second argument in the expression.
+                    if (treeNode.value.Equals("_")) // unary minus only pops one operand
+                    {
+                        Num arg1 = (Num)nodeStack.Pop();
+                        nodeStack.Push(new Num(Calculate(arg1.IntValue(), -1, "*")));
+                        // multiply by -1 to negate the operand
+                    }
+                    else
+                    {
+                        // Pop last two
+                        Num arg2 = (Num)nodeStack.Pop();
+                        Num arg1 = (Num)nodeStack.Pop(); // Note they are reversed, the first one to be popped is the second argument in the expression.
 
-                    nodeStack.Push(new Num(Calculate(arg1.IntValue(), arg2.IntValue(), treeNode.value))); // Create new Num (Integer) with result of calc
+                        nodeStack.Push(new Num(Calculate(arg1.IntValue(), arg2.IntValue(), treeNode.value))); // Create new Num (Integer) with result of calc
+                    }
                 }
             }
             Num result = (Num)nodeStack.Pop(); // Stack should be left with just one Num (Integer) as the final result

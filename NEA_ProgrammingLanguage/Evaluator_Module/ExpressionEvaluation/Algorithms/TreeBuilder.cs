@@ -1,9 +1,7 @@
-﻿using TreeTraversal;
-using System;
-using System.Collections.Generic;
-using System.Data;
+﻿using Errors;
 using Lexer_Module;
-using Errors;
+using System.Collections.Generic;
+using TreeTraversal;
 
 namespace Evaluator_Module.ExpressionEvaluation.Algorithms
 {
@@ -36,12 +34,12 @@ namespace Evaluator_Module.ExpressionEvaluation.Algorithms
          */
         {
 
-            Stack<BinOp> operatorStack = new Stack<BinOp>();
+            Stack<Operator> operatorStack = new Stack<Operator>();
             Stack<TreeNode> numStack = new Stack<TreeNode>();
 
             foreach (Token token in FindUnaryMinus(infix)) // Iterate over infix with unary minus signs found and changed to "_" from "-"
             {
-                if (token.Value().Equals("(")) operatorStack.Push(new BinOp("("));
+                if (token.Value().Equals("(")) operatorStack.Push(new Operator("("));
                 // If it is the opening of a nested expression, just add it to the opstack - precedences values will be dealt with later
 
 
@@ -52,42 +50,61 @@ namespace Evaluator_Module.ExpressionEvaluation.Algorithms
                 }
 
 
-                else if (BinOp.precedences.ContainsKey(token.Value()) && !token.Value().Equals(")"))
+                else if (Operator.precedences.ContainsKey(token.Value()) && !token.Value().Equals(")"))
                     // BinOp.precedences is a DICTIONARY of all operators & their precedence (represented in Integers)
                     // If token.Value() IS an OPERATOR and is NOT ")"
                 {
                     // We have found an operator like +
                     // We need to resolve the operands into leaves first
-                    while (operatorStack.Count > 0 && BinOp.precedences[operatorStack.Peek().value] >= BinOp.precedences[token.Value()])
+                    while (operatorStack.Count > 0 && Operator.precedences[operatorStack.Peek().value] >= Operator.precedences[token.Value()])
                         // While the precedence of the top of the operatorStack is bigger than or equal to the precedence of the char
                         // Remember that precedences are stored as Integers, so we can compare them easily like this
                     {
-                        BinOp binOperator = operatorStack.Pop();
+                        Operator binOperator = operatorStack.Pop();
                         // This will be the parent node of our 'leaf'
                         // the '+' in the example in the topmost comment
 
-                        // Reversed as the second op was pushed at the end
-                        binOperator.right = numStack.Pop();
-                        binOperator.left = numStack.Pop();
-                        // child nodes '1' and '2' added (following example in top comment)
-                        // The numstack does not just contain raw Integer nodes, it could have another leaf (a leaf resolves to an Integer)
+                        if (binOperator.value.Equals("_"))
+                        {
+                            // UNARY MINUS, only pop 1 operand
+                            binOperator.left = numStack.Pop();
+                        }
+                        else
+                        {
+                            // Reversed as the second op comes out first
+                            binOperator.right = numStack.Pop();
+                            binOperator.left = numStack.Pop();
+                            // child nodes '1' and '2' added (following example in top comment)
+                            // The numstack does not just contain raw Integer nodes, it could have another leaf (a leaf resolves to an Integer)
+                        }
 
                         numStack.Push(binOperator); // Leaf created! Now push parent node of leaf back onto numStack
                     }
                     // Now that our loop has iteratively created leaves and connected them for our tree, we have finished
 
                     // Now push operator at the end - we have not calculated anything with this one yet
-                    operatorStack.Push(new BinOp(token.Value()));
+                    operatorStack.Push(new Operator(token.Value()));
                 }
 
                 else if (token.Value().Equals(")")) // End of nested () expression
                 {
                     while (operatorStack.Count > 0 && !operatorStack.Peek().value.Equals("("))
                     {
-                        BinOp binOperator = operatorStack.Pop();
-                        // Reversed as the second op was pushed at the end
-                        binOperator.right = numStack.Pop();
-                        binOperator.left = numStack.Pop();
+                        Operator binOperator = operatorStack.Pop();
+
+                        if (binOperator.value.Equals("_"))
+                        {
+                            // UNARY MINUS, only pop 1 operand
+                            binOperator.left = numStack.Pop();
+                        }
+                        else
+                        {
+                            // Reversed as the second op comes out first
+                            binOperator.right = numStack.Pop();
+                            binOperator.left = numStack.Pop();
+                            // child nodes '1' and '2' added (following example in top comment)
+                            // The numstack does not just contain raw Integer nodes, it could have another leaf (a leaf resolves to an Integer)
+                        }
 
                         numStack.Push(binOperator);
                     }
@@ -105,10 +122,21 @@ namespace Evaluator_Module.ExpressionEvaluation.Algorithms
 
             while (operatorStack.Count > 0) // Same leaf-making loop as before but with slightly different condition
             {
-                BinOp binOperator = operatorStack.Pop();
-                // Reversed as the second op was pushed at the end
-                binOperator.right = numStack.Pop();
-                binOperator.left = numStack.Pop();
+                Operator binOperator = operatorStack.Pop();
+
+                if (binOperator.value.Equals("_"))
+                {
+                    // UNARY MINUS, only pop 1 operand
+                    binOperator.left = numStack.Pop();
+                }
+                else
+                {
+                    // Reversed as the second op comes out first
+                    binOperator.right = numStack.Pop();
+                    binOperator.left = numStack.Pop();
+                    // child nodes '1' and '2' added (following example in top comment)
+                    // The numstack does not just contain raw Integer nodes, it could have another leaf (a leaf resolves to an Integer)
+                }
 
                 numStack.Push(binOperator);
             } // While there are still operators left, make leaves of the remaining with their operands until no more to make
