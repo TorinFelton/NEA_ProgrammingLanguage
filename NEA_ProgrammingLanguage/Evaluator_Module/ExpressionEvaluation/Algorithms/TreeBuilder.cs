@@ -35,10 +35,11 @@ namespace Evaluator_Module.ExpressionEvaluation.Algorithms
          * BinOp: Represents an Operator. Left & Right nodes of a BinOp are to be the operands.
          */
         {
+
             Stack<BinOp> operatorStack = new Stack<BinOp>();
             Stack<TreeNode> numStack = new Stack<TreeNode>();
 
-            foreach (Token token in infix)
+            foreach (Token token in FindUnaryMinus(infix)) // Iterate over infix with unary minus signs found and changed to "_" from "-"
             {
                 if (token.Value().Equals("(")) operatorStack.Push(new BinOp("("));
                 // If it is the opening of a nested expression, just add it to the opstack - precedences values will be dealt with later
@@ -117,5 +118,39 @@ namespace Evaluator_Module.ExpressionEvaluation.Algorithms
             // we have NOT calculated anything - just built a tree of the expression and returned its root as a TreeNode.
         }
 
+        private static List<Token> FindUnaryMinus(List<Token> exprTokens)
+        {
+            List<Token> toReturn = new List<Token>();
+
+            int index = 0;
+
+            while (index < exprTokens.Count)
+            {
+                Token tok = exprTokens[index];
+
+                if (tok.Type().Equals("operator") && tok.Value().Equals("-"))
+                {
+                    // Unary minus rules (OR for each, not all 3 required):
+                    /* - First token in expression
+                     * - Right after '('
+                     * - Right after any operator
+                     */
+                    if (index == 0 || exprTokens[index - 1].Value().Equals("(") || exprTokens[index - 1].Type().Equals("operator"))
+                    {
+                        // found unary minus
+                        tok = new Token("operator", "_");
+                        // change token to unary minus: '_'
+                    }
+                }
+
+                toReturn.Add(tok);
+
+                index++;
+            }
+
+            return toReturn;
+        }
+
     }
+
 }
