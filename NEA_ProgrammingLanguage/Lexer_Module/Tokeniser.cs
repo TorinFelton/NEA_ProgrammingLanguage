@@ -44,7 +44,7 @@ namespace Lexer_Module
                 else if ("(){};=<>!".Contains(character)) 
                 {
                     // Check if more tokens past it then check if we've found a comparator operator like "==", ">=", "<="
-                    if (contents.More() && "=<>".Contains(contents.Next())) 
+                    if (contents.More() && "=<>".Contains(character) && "=<>".Contains(contents.Next())) 
                         yield return new Token("grammar", character.ToString() + contents.MoveNext().ToString());
                         // If the next token is ALSO "=" or "<" or ">", then add both tokens together as one to form "==", "!=", "<=", ">="
 

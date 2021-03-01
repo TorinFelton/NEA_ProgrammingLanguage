@@ -14,10 +14,14 @@ namespace NEA_ProgrammingLanguage
         {
 
             // Test programs to run in case of problems:
-              // Parser_Module.TestProgram.Run();
-              // Lexer_Module.TestProgram.Run();
-              // Evaluator_Module.ExpressionEvaluation.TestProgram.Run();
-              // Evaluator_Module.ExpressionEvaluation.TestProgram.Run();
+
+            /*
+            while (true) {
+                 Lexer_Module.TestProgram.Run();
+                // Parser_Module.TestProgram.Run();
+                // Evaluator_Module.ExpressionEvaluation.TestProgram.Run();
+            }
+            */
 
             // FILE INPUT
             bool invalid = true;
