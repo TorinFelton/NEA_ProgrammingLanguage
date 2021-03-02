@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Errors;
+using System;
 
 namespace DataStructures
 {
@@ -14,16 +15,14 @@ namespace DataStructures
 
         public char Next() // peek
         {
-            if (raw_value.Length > 0 && index < raw_value.Length)
-            {
-                return raw_value[index];
-            }
-            else throw new IndexOutOfRangeException();
+            if (!(raw_value.Length > 0 && index < raw_value.Length)) throw new SyntaxError();
+            else return raw_value[index]; // Returns index
         }
 
         public char MoveNext() // pop
         {
-            return raw_value[index++]; // Returns index THEN increments it
+            if (!(raw_value.Length > 0 && index < raw_value.Length)) throw new SyntaxError();
+            else return raw_value[index++]; // Returns index THEN increments it
         }
 
         public bool More() // check if can peek or pop

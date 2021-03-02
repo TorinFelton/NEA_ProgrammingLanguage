@@ -44,7 +44,7 @@ namespace Parser_Module
             {
                 codeBlockString += step.ToString() + "\n";
             }
-            return "(IF) CONDITION: (" + String.Join("", operand1String) + comparator
+            return this.type + " CONDITION: (" + String.Join("", operand1String) + comparator // note the 'this.type' at the start instead of "IF", as this could be a while loop too
               + String.Join("", operand2String) + ")\n CONTENTS: \n" + codeBlockString;
             // Display condition operands AND each Step in codeblock
         }

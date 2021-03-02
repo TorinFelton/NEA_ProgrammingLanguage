@@ -1,4 +1,5 @@
-﻿using Lexer_Module;
+﻿using Errors;
+using Lexer_Module;
 using System;
 using System.Collections.Generic;
 
@@ -17,16 +18,13 @@ namespace DataStructures
 
         public Token Next() // peek
         {
-            if (tokens.Count > 0 && index < tokens.Count)
-            {
-                return tokens[index];
-            }
-            else throw new IndexOutOfRangeException();
+            if (!(tokens.Count > 0 && index < tokens.Count)) throw new SyntaxError();
+            return tokens[index]; // Returns index
         }
 
         public Token MoveNext() // pop
         {
-            if (!(tokens.Count > 0 && index < tokens.Count)) throw new IndexOutOfRangeException();
+            if (!(tokens.Count > 0 && index < tokens.Count)) throw new SyntaxError();
             return tokens[index++]; // Returns index THEN increments it
         }
 
