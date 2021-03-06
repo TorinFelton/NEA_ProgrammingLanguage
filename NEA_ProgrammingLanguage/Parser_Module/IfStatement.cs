@@ -1,6 +1,7 @@
 ﻿using Lexer_Module;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace Parser_Module
@@ -29,7 +30,9 @@ namespace Parser_Module
         public List<Token> GetOp1() { return operand1; }
         public List<Token> GetOp2() { return operand2; }
         public string GetComparator() { return comparator; }
-        public List<Step> GetCBContents() { return codeBlockContents; }
+        public List<Step> GetCBContents() { return codeBlockContents.ToList(); }
+        // Why .ToList() when it's already a List? Because this forces it to pass effectively by Value instead of by reference - List<> is a reference type.
+
         // END GETTERS
 
         public override string ToString()

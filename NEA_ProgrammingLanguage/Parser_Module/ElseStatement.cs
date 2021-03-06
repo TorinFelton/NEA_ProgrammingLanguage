@@ -2,6 +2,7 @@
 using Parser_Module;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace Parser_Module
@@ -16,7 +17,9 @@ namespace Parser_Module
             this.codeBlockContents = cbContents;
         }
 
-        public List<Step> GetCBContents() { return codeBlockContents; }
+        public List<Step> GetCBContents() { return codeBlockContents.ToList(); } 
+        // Why .ToList() when it's already a List? Because this forces it to pass effectively by Value instead of by reference - List<> is a reference type.
+
 
         public override string ToString()
         {
