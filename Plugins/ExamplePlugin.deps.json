@@ -1,0 +1,36 @@
+{
+  "runtimeTarget": {
+    "name": ".NETCoreApp,Version=v3.1",
+    "signature": ""
+  },
+  "compilationOptions": {},
+  "targets": {
+    ".NETCoreApp,Version=v3.1": {
+      "ExamplePlugin/1.0.0": {
+        "dependencies": {
+          "NEA_ProgrammingLanguage": "1.0.0"
+        },
+        "runtime": {
+          "ExamplePlugin.dll": {}
+        }
+      },
+      "NEA_ProgrammingLanguage/1.0.0": {
+        "runtime": {
+          "NEA_ProgrammingLanguage.dll": {}
+        }
+      }
+    }
+  },
+  "libraries": {
+    "ExamplePlugin/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "NEA_ProgrammingLanguage/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    }
+  }
+}
