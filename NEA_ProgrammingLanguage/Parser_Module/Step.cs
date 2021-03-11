@@ -6,7 +6,7 @@ using TreeTraversal;
 
 namespace Parser_Module
 {
-    abstract class Step // Every child must have a TYPE, the other attributed differ
+    public abstract class Step // Every child must have a TYPE, the other attributed differ
     {
         protected string type;
 

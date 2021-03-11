@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace DataStructures
 {
-    class TokenQueue
+    public class TokenQueue
     {
         private List<Token> tokens;
         private int index = 0;

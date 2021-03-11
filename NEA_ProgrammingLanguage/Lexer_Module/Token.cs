@@ -2,7 +2,7 @@
 
 namespace Lexer_Module
 {
-    class Token
+    public class Token
     {
         private string type;
         private string value;

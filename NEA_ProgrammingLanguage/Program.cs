@@ -14,9 +14,15 @@ namespace NEA_ProgrammingLanguage
             //Parser_Module.TestProgram.Run();
             //Lexer_Module.TestProgram.Run();
             //Evaluator_Module.ExpressionEvaluation.Resolver.TestProgram.Run();
-            foreach (Interfaces.IPlugin plug in PluginLoader.LoadPlugins("C:\\Users\\TorinPC\\source\\repos\\NEA_ProgrammingLanguage\\Plugins"))
+            Console.WriteLine("Plugin folder: ");
+            foreach (Interfaces.IPlugin plug in PluginLoader.LoadPlugins(Console.ReadLine()))
             {
                 Console.WriteLine("Loaded: " + plug.Name);
+            }
+
+            foreach (Interfaces.IParseHandler pHan in PluginLoader.LoadParseHandlers(Console.ReadLine()))
+            {
+                Console.WriteLine("pHandler: " + pHan.ToString());
             }
 
             if (args.Length > 0 && args[0].Equals("-shell"))
