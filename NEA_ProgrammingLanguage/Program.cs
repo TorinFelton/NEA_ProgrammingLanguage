@@ -18,7 +18,7 @@ namespace NEA_ProgrammingLanguage
             /*
             while (true) {
                  //Lexer_Module.TestProgram.Run();
-                 Parser_Module.TestProgram.Run();
+                 //Parser_Module.TestProgram.Run();
                 // Evaluator_Module.ExpressionEvaluation.TestProgram.Run();
             }
             */
