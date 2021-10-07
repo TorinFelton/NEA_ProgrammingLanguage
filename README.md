@@ -1,5 +1,6 @@
 # 'Creating an Interpreter' (Experimental)
 Repo for my AQA A-Level Computer Science Non-Exam Assessment (coursework).
+[The DOCUMENTATION for this project (analysis, design & evaluation) is here.](https://github.com/TorinFelton/NEA_ProgrammingLanguage/blob/master/NEA_REPORT.pdf)
 
 Shell Example:
 
