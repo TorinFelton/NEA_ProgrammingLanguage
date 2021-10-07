@@ -1,6 +1,15 @@
 # 'Creating an Interpreter' (Experimental)
 Repo for my AQA A-Level Computer Science Non-Exam Assessment (coursework).
 
+Shell Example:
+
+
+![Shell Ex1](https://i.imgur.com/6epytNa.png)
+
+
+![Shell Ex2](https://i.imgur.com/zzD6cnO.png)
+
+
 - Uses the implementation of the [ExpressionEvaluator](https://github.com/TorinFelton/ExpressionEvaluator) repository for evaluating mathematical expressions.
 - Experimental for extra features, e.g Else statements, While, etc. these will not be added to the Master branch. 
 
