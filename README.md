@@ -21,8 +21,7 @@ Shell Example:
 - [Mathematical Expression Evaluator](https://github.com/TorinFelton/NEA_ProgrammingLanguage/tree/experimental/NEA_ProgrammingLanguage/Evaluator_Module/ExpressionEvaluation)
 
 
-- Uses the implementation of the [ExpressionEvaluator](https://github.com/TorinFelton/ExpressionEvaluator) repository for evaluating mathematical expressions.
-- Experimental for extra features, e.g Else statements, While, etc. these will not be added to the Master branch. 
+This project uses the implementation of the [ExpressionEvaluator](https://github.com/TorinFelton/ExpressionEvaluator) repository for evaluating mathematical expressions.
 
 ### Experimental Version
 This is the version that I have continued to develop beyond the NEA coursework requirements. 
