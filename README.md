@@ -15,9 +15,9 @@ Shell Example:
 
 # Points of Interest
 
-- [Main Lexer Method](https://github.com/TorinFelton/NEA_ProgrammingLanguage/blob/master/NEA_ProgrammingLanguage/Lexer_Module/Tokeniser.cs)
-- [Main Parser Method](https://github.com/TorinFelton/NEA_ProgrammingLanguage/blob/master/NEA_ProgrammingLanguage/Parser_Module/Parser.cs)
-- [Main Evaluator Method](https://github.com/TorinFelton/NEA_ProgrammingLanguage/blob/master/NEA_ProgrammingLanguage/Evaluator_Module/Evaluator.cs)
+- [Main Lexer Method](https://github.com/TorinFelton/NEA_ProgrammingLanguage/blob/experimental/NEA_ProgrammingLanguage/Lexer_Module/Tokeniser.cs)
+- [Main Parser Method](https://github.com/TorinFelton/NEA_ProgrammingLanguage/blob/experimental/NEA_ProgrammingLanguage/Parser_Module/Parser.cs)
+- [Main Evaluator Method](https://github.com/TorinFelton/NEA_ProgrammingLanguage/blob/experimental/NEA_ProgrammingLanguage/Evaluator_Module/Evaluator.cs)
 - [Mathematical Expression Evaluator](https://github.com/TorinFelton/NEA_ProgrammingLanguage/tree/experimental/NEA_ProgrammingLanguage/Evaluator_Module/ExpressionEvaluation)
 
 
