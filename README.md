@@ -47,7 +47,7 @@ The experimental targets are a lot less likely to be implemented and have not be
 
 <details>
 	<summary>Advanced Expression Resolving</summary>
-	So this works - I don't know *exactly* how or why, but it does. 
+	So this works... 
 
 Prior to this addition, I had 2 implementations of the Djikstra Shunting-yard algorithm - one for doing the usual mathematical operations in the right order, and the other for doing logical operations like '&&' or '||'. 
 They worked separately, but the overall way expressions were handled and resolved was not overly efficient or fully functional. For example, the previous version couldn't handle a boolean expression being something like '(1 == 1) && true', as it's a diverse expression with a few different things to take into account.
