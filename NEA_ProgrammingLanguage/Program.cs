@@ -11,6 +11,7 @@ namespace NEA_ProgrammingLanguage
     {
         static void Main(string[] args)
         {
+            // Test Programs for individual components
             //Parser_Module.TestProgram.Run();
             //Lexer_Module.TestProgram.Run();
             //Evaluator_Module.ExpressionEvaluation.Resolver.TestProgram.Run();
